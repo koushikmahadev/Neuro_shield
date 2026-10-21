@@ -2,7 +2,7 @@
 <html lang="en" class="dark">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
   <title>NEURO-SHIELD | Zero-Trust Defense Architecture Against Neural Side-Channel Exploits & Motor Hijacking</title>
   
   <!-- Tailwind CSS CDN -->
@@ -37,7 +37,7 @@
   <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
 
   <style>
-    /* Custom Scrollbar & Apple/Linear hardware-grade aesthetics */
+    /* Custom Scrollbar & Hardware-Grade Minimalist Aesthetics */
     ::-webkit-scrollbar {
       width: 6px;
       height: 6px;
@@ -53,16 +53,27 @@
       background: #3f3f46;
     }
 
+    /* Hide scrollbar for clean mobile horizontal swipe carousels */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+
     body {
       background-color: #09090b;
       color: #f4f4f5;
       font-feature-settings: "cv02", "cv03", "cv04", "cv11";
       -webkit-font-smoothing: antialiased;
       user-select: none;
+      overflow-x: hidden;
     }
 
     .glass-panel {
-      background: rgba(18, 18, 22, 0.75);
+      background: rgba(18, 18, 22, 0.78);
       backdrop-filter: blur(24px);
       -webkit-backdrop-filter: blur(24px);
       border: 1px solid rgba(255, 255, 255, 0.08);
@@ -70,11 +81,11 @@
     }
 
     .glass-panel-elevated {
-      background: rgba(24, 24, 30, 0.88);
+      background: rgba(24, 24, 30, 0.90);
       backdrop-filter: blur(32px);
       -webkit-backdrop-filter: blur(32px);
       border: 1px solid rgba(255, 255, 255, 0.12);
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.08);
     }
 
     .glow-crimson {
@@ -96,38 +107,53 @@
       animation: perimeterPulse 1.2s ease-in-out infinite;
     }
 
-    /* Range slider custom styling */
+    /* Range slider custom styling with generous mobile touch thumb */
     input[type=range] {
       -webkit-appearance: none;
       background: #27272a;
-      height: 4px;
-      border-radius: 2px;
+      height: 6px;
+      border-radius: 3px;
       outline: none;
+      touch-action: pan-y;
     }
     input[type=range]::-webkit-slider-thumb {
       -webkit-appearance: none;
-      width: 16px;
-      height: 16px;
+      width: 22px;
+      height: 22px;
       border-radius: 50%;
       background: #38bdf8;
       border: 2px solid #09090b;
       cursor: pointer;
       transition: transform 0.1s ease;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.6);
     }
-    input[type=range]::-webkit-slider-thumb:hover {
-      transform: scale(1.2);
+    input[type=range]::-webkit-slider-thumb:hover,
+    input[type=range]::-webkit-slider-thumb:active {
+      transform: scale(1.25);
     }
 
-    /* Oscilloscope split line handle */
+    /* Oscilloscope split line handle with expanded mobile touch area */
     .split-handle {
       position: absolute;
       top: 0;
       bottom: 0;
       width: 2px;
-      background: rgba(255, 255, 255, 0.8);
+      background: rgba(255, 255, 255, 0.85);
       cursor: ew-resize;
       pointer-events: auto;
-      z-index: 20;
+      z-index: 25;
+      touch-action: none;
+    }
+    /* Invisible expanded hit target (48px wide) for easy mobile thumb grabbing */
+    .split-handle::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: -24px;
+      width: 50px;
+      background: transparent;
+      touch-action: none;
     }
     .split-handle::after {
       content: '↔';
@@ -135,19 +161,20 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: 28px;
-      height: 28px;
+      width: 32px;
+      height: 32px;
       border-radius: 50%;
       background: #18181b;
-      border: 1px solid rgba(255, 255, 255, 0.4);
+      border: 1.5px solid rgba(255, 255, 255, 0.5);
       color: #fff;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 11px;
+      font-size: 13px;
       font-family: monospace;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.85);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.85);
       user-select: none;
+      touch-action: none;
     }
 
     /* Canvas high-DPI crispness */
@@ -155,142 +182,155 @@
       image-rendering: -webkit-optimize-contrast;
       image-rendering: crisp-edges;
     }
+
+    /* Sticky column styling for mobile benchmark matrix table */
+    .sticky-col {
+      position: sticky;
+      left: 0;
+      background-color: #121217;
+      z-index: 5;
+    }
   </style>
 </head>
-<body class="min-h-screen flex flex-col bg-[#09090b] text-zinc-100 selection:bg-cyan-500/20 selection:text-cyan-200">
+<body class="min-h-screen flex flex-col bg-[#09090b] text-zinc-100 selection:bg-cyan-500/20 selection:text-cyan-200 pb-20 md:pb-6">
 
   <!-- TOP HARDWARE-GRADE NAVIGATION BAR -->
-  <header class="sticky top-0 z-50 glass-panel border-b border-white/10 px-4 lg:px-8 py-3 transition-colors duration-300">
-    <div class="max-w-[1720px] mx-auto flex flex-wrap items-center justify-between gap-3">
+  <header class="sticky top-0 z-40 glass-panel border-b border-white/10 px-3 sm:px-6 py-2.5 transition-colors duration-300">
+    <div class="max-w-[1720px] mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
       
-      <!-- Brand & Status Pill -->
-      <div class="flex items-center space-x-3">
-        <div class="relative flex items-center justify-center w-8 h-8 rounded-lg bg-zinc-900 border border-white/10">
-          <svg class="w-4 h-4 text-ice-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-          </svg>
-          <span id="defensePulseBadge" class="absolute -top-1 -right-1 flex h-2.5 w-2.5">
-            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-electric-emerald opacity-75"></span>
-            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-electric-emerald"></span>
-          </span>
-        </div>
-        <div>
-          <div class="flex items-center space-x-2">
-            <span class="font-bold tracking-tight text-sm text-white font-sans uppercase">NEURO-SHIELD</span>
-            <span class="text-[10px] px-1.5 py-0.5 rounded font-mono font-semibold bg-zinc-800 text-zinc-300 border border-white/5">v2.4-ASIC</span>
+      <!-- Top Row: Brand & Master Shield Status -->
+      <div class="flex items-center justify-between w-full sm:w-auto">
+        <div class="flex items-center space-x-2.5">
+          <div class="relative flex items-center justify-center w-8 h-8 rounded-lg bg-zinc-900 border border-white/10">
+            <svg class="w-4 h-4 text-ice-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+            </svg>
+            <span id="defensePulseBadge" class="absolute -top-1 -right-1 flex h-2.5 w-2.5">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-electric-emerald opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-electric-emerald"></span>
+            </span>
           </div>
-          <div class="text-[10px] text-zinc-400 font-mono tracking-tight flex items-center space-x-1.5">
-            <span>IEEE S&P Research Telemetry</span>
-            <span class="text-zinc-600">•</span>
-            <span id="defenseStatusText" class="text-electric-emerald font-semibold">ZERO-TRUST ACTIVE</span>
+          <div>
+            <div class="flex items-center space-x-1.5">
+              <span class="font-bold tracking-tight text-sm text-white font-sans uppercase">NEURO-SHIELD</span>
+              <span class="text-[9px] px-1.5 py-0.5 rounded font-mono font-semibold bg-zinc-800 text-zinc-300 border border-white/5">v2.4-ASIC</span>
+            </div>
+            <div class="text-[10px] text-zinc-400 font-mono tracking-tight flex items-center space-x-1">
+              <span class="hidden xs:inline">IEEE S&P</span>
+              <span class="hidden xs:inline text-zinc-600">•</span>
+              <span id="defenseStatusText" class="text-electric-emerald font-semibold">ZERO-TRUST ACTIVE</span>
+            </div>
           </div>
         </div>
+
+        <!-- Master Shield Toggle Button (Accessible in top row on mobile) -->
+        <button id="masterShieldBtn" onclick="toggleNeuroShield()" class="group relative px-3 py-1.5 rounded-lg text-xs font-semibold font-mono tracking-tight transition-all duration-200 flex items-center space-x-1.5 bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 hover:bg-emerald-500/20 glow-emerald min-h-[36px]">
+          <span class="w-2 h-2 rounded-full bg-electric-emerald animate-pulse"></span>
+          <span id="masterShieldLabel">SHIELD: ON</span>
+        </button>
       </div>
 
-      <!-- Quick Master Controls & Mode Switcher -->
-      <div class="flex items-center flex-wrap gap-2">
+      <!-- Second Row / Right Controls: Mode Switcher, Audio, Math & QR Modal -->
+      <div class="flex items-center justify-between sm:justify-end flex-wrap gap-2 pt-1 sm:pt-0 border-t border-white/5 sm:border-0">
         
         <!-- Guided Story Mode vs Pro Dashboard Toggle -->
-        <div class="flex items-center p-0.5 rounded-lg bg-zinc-900/90 border border-white/10">
-          <button id="modeGuidedBtn" onclick="switchMode('guided')" class="px-3 py-1.5 rounded-md text-xs font-medium transition-all duration-200 bg-white/10 text-white shadow-sm flex items-center space-x-1.5">
+        <div class="flex items-center p-0.5 rounded-lg bg-zinc-900 border border-white/10 text-xs">
+          <button id="modeGuidedBtn" onclick="switchMode('guided')" class="px-2.5 py-1.5 rounded-md text-xs font-medium transition-all duration-200 bg-white/10 text-white shadow-sm flex items-center space-x-1 min-h-[32px]">
             <svg class="w-3.5 h-3.5 text-ice-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
-            <span>Guided Tour</span>
+            <span>Tour</span>
           </button>
-          <button id="modeProBtn" onclick="switchMode('pro')" class="px-3 py-1.5 rounded-md text-xs font-medium transition-all duration-200 text-zinc-400 hover:text-white flex items-center space-x-1.5">
+          <button id="modeProBtn" onclick="switchMode('pro')" class="px-2.5 py-1.5 rounded-md text-xs font-medium transition-all duration-200 text-zinc-400 hover:text-white flex items-center space-x-1 min-h-[32px]">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
             <span>Pro Lab</span>
           </button>
         </div>
 
-        <!-- Master Neuro-Shield Toggle -->
-        <button id="masterShieldBtn" onclick="toggleNeuroShield()" class="group relative px-3.5 py-1.5 rounded-lg text-xs font-semibold font-mono tracking-tight transition-all duration-200 flex items-center space-x-2 bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 hover:bg-emerald-500/20 glow-emerald">
-          <span class="w-2 h-2 rounded-full bg-electric-emerald animate-pulse"></span>
-          <span id="masterShieldLabel">SHIELD: ENGAGED</span>
-        </button>
+        <div class="flex items-center space-x-1.5">
+          <!-- Audio Synthesizer Toggle -->
+          <button id="audioToggleBtn" onclick="toggleAudio()" class="px-2.5 py-1.5 rounded-lg text-xs font-mono bg-zinc-900 border border-white/10 text-zinc-400 hover:text-white transition flex items-center space-x-1 min-h-[34px]" title="Toggle Synthesizer Haptic Audio">
+            <svg id="audioIcon" class="w-3.5 h-3.5 text-ice-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+            </svg>
+            <span id="audioStatusText" class="text-[11px]">AUDIO</span>
+          </button>
 
-        <!-- Audio Synthesizer Toggle -->
-        <button id="audioToggleBtn" onclick="toggleAudio()" class="px-2.5 py-1.5 rounded-lg text-xs font-mono bg-zinc-900 border border-white/10 text-zinc-400 hover:text-white transition flex items-center space-x-1.5" title="Toggle Synthesizer Haptic Audio">
-          <svg id="audioIcon" class="w-4 h-4 text-ice-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
-          </svg>
-          <span id="audioStatusText" class="hidden sm:inline">AUDIO ON</span>
-        </button>
+          <!-- Math Proofs Modal Trigger -->
+          <button onclick="openModal('mathModal')" class="px-2.5 py-1.5 rounded-lg text-xs font-mono bg-zinc-900 border border-white/10 text-zinc-300 hover:text-white hover:border-white/20 transition flex items-center space-x-1 min-h-[34px]" title="Theoretical Proofs & Riemannian Manifolds">
+            <svg class="w-3.5 h-3.5 text-cyber-amber" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+            <span class="text-[11px]">Math</span>
+          </button>
 
-        <!-- Math Proofs Modal Trigger -->
-        <button onclick="openModal('mathModal')" class="px-2.5 py-1.5 rounded-lg text-xs font-mono bg-zinc-900 border border-white/10 text-zinc-300 hover:text-white hover:border-white/20 transition flex items-center space-x-1.5" title="Theoretical Proofs & Riemannian Manifolds">
-          <svg class="w-3.5 h-3.5 text-cyber-amber" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
-          <span class="hidden md:inline">Math Proofs</span>
-        </button>
-
-        <!-- QR Poster Share Modal Trigger -->
-        <button onclick="openModal('qrModal')" class="px-2 py-1.5 rounded-lg text-xs font-mono bg-zinc-900 border border-white/10 text-zinc-400 hover:text-white transition flex items-center" title="Poster QR & Citation">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/></svg>
-        </button>
+          <!-- QR Poster Share Modal Trigger -->
+          <button onclick="openModal('qrModal')" class="px-2.5 py-1.5 rounded-lg text-xs font-mono bg-zinc-900 border border-white/10 text-zinc-400 hover:text-white transition flex items-center min-h-[34px]" title="Poster QR & Citation">
+            <svg class="w-4 h-4 text-ice-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/></svg>
+          </button>
+        </div>
 
       </div>
     </div>
   </header>
 
   <!-- MODULE 1: GUIDED WALKTHROUGH STEPPER (STORY MODE BANNER) -->
-  <section id="guidedTourSection" class="glass-panel border-b border-white/10 px-4 lg:px-8 py-3 transition-all duration-300">
+  <section id="guidedTourSection" class="glass-panel border-b border-white/10 px-3 sm:px-6 py-3 transition-all duration-300">
     <div class="max-w-[1720px] mx-auto">
-      <!-- Steps Progress Bar -->
+      
+      <!-- Steps Header & Navigation Controls -->
       <div class="flex items-center justify-between mb-2">
         <div class="flex items-center space-x-2">
-          <span class="text-[11px] font-mono uppercase tracking-wider text-ice-blue font-bold">Scientific Poster Story Mode</span>
-          <span class="text-zinc-500">•</span>
-          <span id="stepCounterText" class="text-[11px] font-mono text-zinc-400">Step 1 of 4</span>
+          <span class="text-[10px] sm:text-[11px] font-mono uppercase tracking-wider text-ice-blue font-bold">Story Walkthrough</span>
+          <span class="text-zinc-600">•</span>
+          <span id="stepCounterText" class="text-[10px] sm:text-[11px] font-mono text-zinc-400">Step 1 of 4</span>
         </div>
-        <div class="flex items-center space-x-2">
-          <button id="prevStepBtn" onclick="prevStep()" class="px-2.5 py-1 text-xs rounded bg-zinc-800 text-zinc-400 hover:text-white transition disabled:opacity-30 disabled:pointer-events-none">← Back</button>
-          <button id="nextStepBtn" onclick="nextStep()" class="px-3 py-1 text-xs rounded bg-ice-blue/20 text-ice-blue border border-ice-blue/40 hover:bg-ice-blue/30 font-medium transition">Next: The Breach →</button>
+        <div class="flex items-center space-x-1.5">
+          <button id="prevStepBtn" onclick="prevStep()" class="px-2.5 py-1 text-xs rounded bg-zinc-800 text-zinc-400 hover:text-white transition disabled:opacity-30 disabled:pointer-events-none min-h-[30px]">← Back</button>
+          <button id="nextStepBtn" onclick="nextStep()" class="px-3 py-1 text-xs rounded bg-ice-blue/20 text-ice-blue border border-ice-blue/40 hover:bg-ice-blue/30 font-semibold transition min-h-[30px]">Next →</button>
         </div>
       </div>
 
-      <!-- Step Indicators -->
-      <div class="grid grid-cols-4 gap-2">
-        <div id="stepTab1" onclick="goToStep(1)" class="cursor-pointer p-2 rounded-lg border border-ice-blue/50 bg-ice-blue/10 transition-all">
+      <!-- Swipeable Step Indicators on Mobile / Grid on Desktop -->
+      <div class="flex sm:grid sm:grid-cols-4 gap-2 overflow-x-auto pb-1 no-scrollbar snap-x">
+        <div id="stepTab1" onclick="goToStep(1)" class="cursor-pointer p-2.5 rounded-lg border border-ice-blue/50 bg-ice-blue/10 transition-all min-w-[130px] sm:min-w-0 flex-shrink-0 snap-start">
           <div class="flex items-center space-x-1.5 text-xs font-semibold text-ice-blue">
             <span class="w-4 h-4 rounded-full bg-ice-blue/20 text-[10px] flex items-center justify-center font-mono">1</span>
-            <span class="truncate">The Baseline</span>
+            <span class="truncate">Baseline</span>
           </div>
-          <p class="text-[10px] text-zinc-400 mt-0.5 truncate hidden sm:block">Resting rhythms & 10-20 montage</p>
+          <p class="text-[10px] text-zinc-400 mt-0.5 truncate hidden sm:block">Resting brain rhythms</p>
         </div>
-        <div id="stepTab2" onclick="goToStep(2)" class="cursor-pointer p-2 rounded-lg border border-white/5 bg-zinc-900/50 hover:bg-zinc-800/50 transition-all">
+        <div id="stepTab2" onclick="goToStep(2)" class="cursor-pointer p-2.5 rounded-lg border border-white/5 bg-zinc-900/60 hover:bg-zinc-800/60 transition-all min-w-[130px] sm:min-w-0 flex-shrink-0 snap-start">
           <div class="flex items-center space-x-1.5 text-xs font-semibold text-zinc-400">
             <span class="w-4 h-4 rounded-full bg-zinc-800 text-[10px] flex items-center justify-center font-mono">2</span>
             <span class="truncate">The Breach</span>
           </div>
-          <p class="text-[10px] text-zinc-500 mt-0.5 truncate hidden sm:block">P300 side-channel & motor hijack</p>
+          <p class="text-[10px] text-zinc-500 mt-0.5 truncate hidden sm:block">P300 & motor hijack</p>
         </div>
-        <div id="stepTab3" onclick="goToStep(3)" class="cursor-pointer p-2 rounded-lg border border-white/5 bg-zinc-900/50 hover:bg-zinc-800/50 transition-all">
+        <div id="stepTab3" onclick="goToStep(3)" class="cursor-pointer p-2.5 rounded-lg border border-white/5 bg-zinc-900/60 hover:bg-zinc-800/60 transition-all min-w-[130px] sm:min-w-0 flex-shrink-0 snap-start">
           <div class="flex items-center space-x-1.5 text-xs font-semibold text-zinc-400">
             <span class="w-4 h-4 rounded-full bg-zinc-800 text-[10px] flex items-center justify-center font-mono">3</span>
             <span class="truncate">The Defense</span>
           </div>
-          <p class="text-[10px] text-zinc-500 mt-0.5 truncate hidden sm:block">ε-LDP scrambling & GNN PLV engine</p>
+          <p class="text-[10px] text-zinc-500 mt-0.5 truncate hidden sm:block">ε-LDP & GNN engine</p>
         </div>
-        <div id="stepTab4" onclick="goToStep(4)" class="cursor-pointer p-2 rounded-lg border border-white/5 bg-zinc-900/50 hover:bg-zinc-800/50 transition-all">
+        <div id="stepTab4" onclick="goToStep(4)" class="cursor-pointer p-2.5 rounded-lg border border-white/5 bg-zinc-900/60 hover:bg-zinc-800/60 transition-all min-w-[130px] sm:min-w-0 flex-shrink-0 snap-start">
           <div class="flex items-center space-x-1.5 text-xs font-semibold text-zinc-400">
             <span class="w-4 h-4 rounded-full bg-zinc-800 text-[10px] flex items-center justify-center font-mono">4</span>
             <span class="truncate">Scientific Audit</span>
           </div>
-          <p class="text-[10px] text-zinc-500 mt-0.5 truncate hidden sm:block">Mathematical metrics & replay</p>
+          <p class="text-[10px] text-zinc-500 mt-0.5 truncate hidden sm:block">Proofs & replay buffer</p>
         </div>
       </div>
 
       <!-- Contextual narrative card for current step -->
-      <div id="stepNarrativeBox" class="mt-2.5 p-3 rounded-lg bg-zinc-900/70 border border-white/5 text-xs text-zinc-300 flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+      <div id="stepNarrativeBox" class="mt-2.5 p-3 rounded-lg bg-zinc-900/80 border border-white/5 text-xs text-zinc-300 flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
         <div class="flex items-start space-x-2.5">
-          <span class="text-lg">🧠</span>
+          <span class="text-xl shrink-0">🧠</span>
           <div>
-            <h4 id="stepNarrativeTitle" class="font-semibold text-white">Observing Resting Baseline Brain Rhythms</h4>
+            <h4 id="stepNarrativeTitle" class="font-semibold text-white text-xs sm:text-sm">Observing Resting Baseline Brain Rhythms</h4>
             <p id="stepNarrativeDesc" class="text-zinc-400 text-[11px] mt-0.5 leading-relaxed">
               The 8-channel EEG telemetry below displays normal physiological oscillations across frontal, central motor, parietal, and occipital lobes. Observe the resting 10 Hz alpha wave on O1 and 20 Hz beta on C3/C4. No adversarial or evoked anomalies are present.
             </p>
           </div>
         </div>
-        <div id="stepActionPrompt" class="shrink-0 flex items-center space-x-2 w-full md:w-auto justify-end">
+        <div id="stepActionPrompt" class="shrink-0 flex items-center space-x-2 w-full md:w-auto justify-end pt-1 md:pt-0 border-t border-white/5 md:border-0">
           <!-- Dynamic action button populated per step -->
         </div>
       </div>
@@ -298,28 +338,28 @@
   </section>
 
   <!-- MAIN TELEMETRY WORKSPACE -->
-  <main class="flex-1 max-w-[1720px] w-full mx-auto p-4 lg:p-6 space-y-6">
+  <main class="flex-1 max-w-[1720px] w-full mx-auto p-3 sm:p-5 lg:p-6 space-y-5">
 
     <!-- TOP SECTION: PRIMARY LAB WORKBENCH (OSCILLOSCOPE + LIVE ATTACK / MOTOR PANELS) -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
 
       <!-- LEFT / MAIN COLUMN: 8-CHANNEL OSCILLOSCOPE (MODULE 3 & SPEC 3) -->
       <div class="lg:col-span-8 flex flex-col space-y-4">
         
         <!-- Oscilloscope Card -->
-        <div class="glass-panel rounded-2xl p-4 sm:p-5 flex flex-col relative overflow-hidden">
+        <div class="glass-panel rounded-2xl p-3.5 sm:p-5 flex flex-col relative overflow-hidden">
           
           <!-- Oscilloscope Header & Control Bar -->
-          <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-white/10">
-            <div class="flex items-center space-x-3">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-3 border-b border-white/10">
+            <div class="flex items-center space-x-2.5">
               <div class="w-2.5 h-2.5 rounded-full bg-ice-blue animate-pulse"></div>
               <div>
-                <h2 class="text-sm font-bold text-white font-mono tracking-tight flex items-center space-x-2">
+                <h2 class="text-xs sm:text-sm font-bold text-white font-mono tracking-tight flex items-center space-x-1.5">
                   <span>8-CHANNEL CORTICAL TELEMETRY STREAM</span>
-                  <span class="text-[10px] font-normal px-2 py-0.5 rounded-full bg-white/5 text-zinc-300 border border-white/10">250 Hz Real-Time</span>
+                  <span class="text-[9px] px-1.5 py-0.2 rounded bg-white/5 text-zinc-300 border border-white/10">250 Hz</span>
                 </h2>
-                <div class="text-[11px] font-mono text-zinc-400 mt-0.5">
-                  10-20 System • Bandpass: 0.5 – 50 Hz • Notch: 60 Hz • Impedance: &lt;3.2 kΩ
+                <div class="text-[10px] font-mono text-zinc-400 mt-0.5">
+                  10-20 Scalp Montage • Bandpass: 0.5 – 50 Hz • Notch: 60 Hz
                 </div>
               </div>
             </div>
@@ -327,178 +367,178 @@
             <!-- Canvas View Options -->
             <div class="flex items-center flex-wrap gap-2 text-xs font-mono">
               <!-- Split Screen Slider Toggle -->
-              <button id="splitModeBtn" onclick="toggleSplitMode()" class="px-2.5 py-1 rounded bg-zinc-800 text-zinc-300 border border-white/10 hover:border-white/20 transition flex items-center space-x-1.5" title="Interactive Split-Curtain Comparison">
-                <span>Split View:</span>
+              <button id="splitModeBtn" onclick="toggleSplitMode()" class="px-2.5 py-1 rounded bg-zinc-800 text-zinc-300 border border-white/10 hover:border-white/20 transition flex items-center space-x-1 min-h-[30px]" title="Interactive Split-Curtain Comparison">
+                <span>Split:</span>
                 <span id="splitModeLabel" class="text-ice-blue font-bold">ON (50/50)</span>
               </button>
 
               <!-- Pause / Stream Toggle -->
-              <button id="pauseStreamBtn" onclick="togglePauseStream()" class="px-2.5 py-1 rounded bg-zinc-800 text-zinc-300 border border-white/10 hover:border-white/20 transition">
+              <button id="pauseStreamBtn" onclick="togglePauseStream()" class="px-2.5 py-1 rounded bg-zinc-800 text-zinc-300 border border-white/10 hover:border-white/20 transition min-h-[30px]">
                 <span id="pauseBtnText">⏸ Freeze</span>
               </button>
 
               <!-- Voltage Scale Selector -->
-              <select id="voltageScaleSelect" onchange="changeVoltageScale(this.value)" class="bg-zinc-900 text-zinc-300 border border-white/10 rounded px-2 py-1 text-xs focus:outline-none">
-                <option value="1">±25 µV/div</option>
-                <option value="1.5">±50 µV/div</option>
-                <option value="2.5" selected>±100 µV/div</option>
-                <option value="4">±200 µV/div</option>
+              <select id="voltageScaleSelect" onchange="changeVoltageScale(this.value)" class="bg-zinc-900 text-zinc-300 border border-white/10 rounded px-2 py-1 text-xs focus:outline-none min-h-[30px]">
+                <option value="1">±25 µV</option>
+                <option value="1.5">±50 µV</option>
+                <option value="2.5" selected>±100 µV</option>
+                <option value="4">±200 µV</option>
               </select>
             </div>
           </div>
 
           <!-- Oscilloscope Overlay Badges (Split View Legend) -->
-          <div id="splitLegendBar" class="flex items-center justify-between text-[11px] font-mono pt-2 px-1 text-zinc-400">
-            <div class="flex items-center space-x-2 text-neon-crimson font-semibold">
+          <div id="splitLegendBar" class="flex items-center justify-between text-[10px] sm:text-[11px] font-mono pt-2 px-1 text-zinc-400">
+            <div class="flex items-center space-x-1.5 text-neon-crimson font-semibold">
               <span class="w-2 h-2 rounded-full bg-neon-crimson"></span>
-              <span>LEFT: RAW VULNERABLE TELEMETRY</span>
+              <span>RAW (VULNERABLE)</span>
             </div>
-            <div class="text-[10px] text-zinc-500 hidden sm:block">◄ Drag Split Divider to Inspect In Real-Time ►</div>
-            <div class="flex items-center space-x-2 text-electric-emerald font-semibold">
-              <span>RIGHT: NEURO-SHIELD PROTECTED LATENT</span>
+            <div class="text-[9px] text-zinc-500 hidden sm:block">◄ Drag Split Divider to Inspect In Real-Time ►</div>
+            <div class="flex items-center space-x-1.5 text-electric-emerald font-semibold">
+              <span>PROTECTED (LATENT)</span>
               <span class="w-2 h-2 rounded-full bg-electric-emerald"></span>
             </div>
           </div>
 
           <!-- Canvas Container with Interactive Split Slider -->
-          <div id="canvasWrapper" class="relative mt-2 w-full h-[360px] sm:h-[460px] bg-[#0c0c10] rounded-xl overflow-hidden border border-white/5">
+          <div id="canvasWrapper" class="relative mt-2 w-full h-[320px] sm:h-[440px] bg-[#0c0c10] rounded-xl overflow-hidden border border-white/5">
             <!-- Background grid lines & signals -->
             <canvas id="eegCanvas" class="w-full h-full block cursor-crosshair"></canvas>
 
-            <!-- Split Curtain Slider Handle Element -->
+            <!-- Split Curtain Slider Handle Element with mobile touch target -->
             <div id="splitHandle" class="split-handle" style="left: 50%;"></div>
 
             <!-- Dynamic Telemetry HUD overlay -->
-            <div class="absolute top-2 left-3 pointer-events-none flex flex-col space-y-1 font-mono text-[10px] text-zinc-400 bg-black/70 backdrop-blur-md px-2.5 py-1.5 rounded border border-white/5">
-              <div class="flex items-center space-x-3">
+            <div class="absolute top-2 left-2 pointer-events-none flex flex-col space-y-0.5 font-mono text-[9px] sm:text-[10px] text-zinc-400 bg-black/75 backdrop-blur-md px-2 py-1 rounded border border-white/5">
+              <div class="flex items-center space-x-2 sm:space-x-3">
                 <span>FPS: <strong id="fpsCounter" class="text-zinc-200">60</strong></span>
-                <span>PACKET: <strong id="packetCounter" class="text-zinc-200">008492</strong></span>
-                <span>LDP BUDGET ε: <strong id="hudEpsilon" class="text-ice-blue">0.50</strong></span>
+                <span>PKT: <strong id="packetCounter" class="text-zinc-200">008492</strong></span>
+                <span>ε: <strong id="hudEpsilon" class="text-ice-blue">0.50</strong></span>
               </div>
-              <div class="flex items-center space-x-3">
-                <span>PLV COHERENCE: <strong id="hudPlv" class="text-zinc-200">0.412</strong></span>
-                <span>AIRM DIST: <strong id="hudAirm" class="text-zinc-200">0.084</strong></span>
-                <span>LATENCY: <strong id="hudLatency" class="text-electric-emerald">1.8 ms</strong></span>
+              <div class="flex items-center space-x-2 sm:space-x-3">
+                <span>PLV: <strong id="hudPlv" class="text-zinc-200">0.412</strong></span>
+                <span>AIRM: <strong id="hudAirm" class="text-zinc-200">0.084</strong></span>
+                <span>LAT: <strong id="hudLatency" class="text-electric-emerald">1.8ms</strong></span>
               </div>
             </div>
 
             <!-- P300 Spike Alert Indicator (Appears when attack occurs) -->
-            <div id="p300AlertToast" class="absolute bottom-3 left-1/2 -translate-x-1/2 pointer-events-none transition-all duration-300 opacity-0 translate-y-2 bg-rose-950/90 border border-rose-500/60 backdrop-blur-md text-rose-200 text-xs font-mono px-4 py-1.5 rounded-full flex items-center space-x-2 shadow-2xl">
-              <span class="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
-              <span><strong>+15 µV P300 EVOKED POTENTIAL SPIKE DETECTED</strong> at t = 300 ms on Pz</span>
+            <div id="p300AlertToast" class="absolute bottom-3 left-1/2 -translate-x-1/2 pointer-events-none transition-all duration-300 opacity-0 translate-y-2 bg-rose-950/90 border border-rose-500/60 backdrop-blur-md text-rose-200 text-[10px] sm:text-xs font-mono px-3 py-1.5 rounded-full flex items-center space-x-1.5 shadow-2xl max-w-[90%] text-center">
+              <span class="w-2 h-2 rounded-full bg-rose-500 animate-ping shrink-0"></span>
+              <span><strong>+15 µV P300 SPIKE DETECTED</strong> at t = 300 ms on Pz</span>
             </div>
 
           </div>
 
-          <!-- Oscilloscope Channel Labels Legend Below -->
-          <div class="grid grid-cols-4 sm:grid-cols-8 gap-2 pt-3 text-center font-mono text-[11px] text-zinc-400">
+          <!-- Oscilloscope Channel Labels Legend Below (Optimized 4x2 on Mobile, 8x1 on Desktop) -->
+          <div class="grid grid-cols-4 sm:grid-cols-8 gap-1.5 pt-2.5 text-center font-mono text-[10px] text-zinc-400">
             <div class="bg-zinc-900/60 p-1.5 rounded border border-white/5">
-              <span class="text-ice-blue font-bold">Fp1</span> <span class="text-zinc-500 text-[10px]">Frontal</span>
-              <div id="volt_Fp1" class="text-[10px] text-zinc-300">+4.2 µV</div>
+              <span class="text-ice-blue font-bold">Fp1</span> <span class="text-zinc-500 text-[9px] hidden sm:inline">Front</span>
+              <div id="volt_Fp1" class="text-[9px] sm:text-[10px] text-zinc-300">+4.2 µV</div>
             </div>
             <div class="bg-zinc-900/60 p-1.5 rounded border border-white/5">
-              <span class="text-ice-blue font-bold">Fp2</span> <span class="text-zinc-500 text-[10px]">Frontal</span>
-              <div id="volt_Fp2" class="text-[10px] text-zinc-300">-2.1 µV</div>
+              <span class="text-ice-blue font-bold">Fp2</span> <span class="text-zinc-500 text-[9px] hidden sm:inline">Front</span>
+              <div id="volt_Fp2" class="text-[9px] sm:text-[10px] text-zinc-300">-2.1 µV</div>
             </div>
             <div class="bg-zinc-900/60 p-1.5 rounded border border-white/5">
-              <span class="text-amber-400 font-bold">C3</span> <span class="text-zinc-500 text-[10px]">Motor L</span>
-              <div id="volt_C3" class="text-[10px] text-zinc-300">+12.8 µV</div>
+              <span class="text-amber-400 font-bold">C3</span> <span class="text-zinc-500 text-[9px] hidden sm:inline">MotL</span>
+              <div id="volt_C3" class="text-[9px] sm:text-[10px] text-zinc-300">+12.8 µV</div>
             </div>
             <div class="bg-zinc-900/60 p-1.5 rounded border border-white/5">
-              <span class="text-amber-400 font-bold">C4</span> <span class="text-zinc-500 text-[10px]">Motor R</span>
-              <div id="volt_C4" class="text-[10px] text-zinc-300">-8.4 µV</div>
+              <span class="text-amber-400 font-bold">C4</span> <span class="text-zinc-500 text-[9px] hidden sm:inline">MotR</span>
+              <div id="volt_C4" class="text-[9px] sm:text-[10px] text-zinc-300">-8.4 µV</div>
             </div>
-            <div class="bg-zinc-900/60 p-1.5 rounded border border-white/5 border-l-2 border-l-rose-500/80">
-              <span class="text-rose-400 font-bold">Pz</span> <span class="text-rose-300 text-[10px]">P300 ERP</span>
-              <div id="volt_Pz" class="text-[10px] text-zinc-300 font-bold">+1.8 µV</div>
-            </div>
-            <div class="bg-zinc-900/60 p-1.5 rounded border border-white/5">
-              <span class="text-purple-400 font-bold">P3</span> <span class="text-zinc-500 text-[10px]">Parietal</span>
-              <div id="volt_P3" class="text-[10px] text-zinc-300">+3.1 µV</div>
+            <div class="bg-zinc-900/60 p-1.5 rounded border border-white/5 border-l-2 border-l-rose-500">
+              <span class="text-rose-400 font-bold">Pz</span> <span class="text-rose-300 text-[9px] hidden sm:inline">P300</span>
+              <div id="volt_Pz" class="text-[9px] sm:text-[10px] text-zinc-300 font-bold">+1.8 µV</div>
             </div>
             <div class="bg-zinc-900/60 p-1.5 rounded border border-white/5">
-              <span class="text-purple-400 font-bold">P4</span> <span class="text-zinc-500 text-[10px]">Parietal</span>
-              <div id="volt_P4" class="text-[10px] text-zinc-300">-5.0 µV</div>
+              <span class="text-purple-400 font-bold">P3</span> <span class="text-zinc-500 text-[9px] hidden sm:inline">Pari</span>
+              <div id="volt_P3" class="text-[9px] sm:text-[10px] text-zinc-300">+3.1 µV</div>
             </div>
             <div class="bg-zinc-900/60 p-1.5 rounded border border-white/5">
-              <span class="text-emerald-400 font-bold">O1</span> <span class="text-zinc-500 text-[10px]">Occipital</span>
-              <div id="volt_O1" class="text-[10px] text-zinc-300">+34.2 µV</div>
+              <span class="text-purple-400 font-bold">P4</span> <span class="text-zinc-500 text-[9px] hidden sm:inline">Pari</span>
+              <div id="volt_P4" class="text-[9px] sm:text-[10px] text-zinc-300">-5.0 µV</div>
+            </div>
+            <div class="bg-zinc-900/60 p-1.5 rounded border border-white/5">
+              <span class="text-emerald-400 font-bold">O1</span> <span class="text-zinc-500 text-[9px] hidden sm:inline">Occi</span>
+              <div id="volt_O1" class="text-[9px] sm:text-[10px] text-zinc-300">+34.2 µV</div>
             </div>
           </div>
 
         </div>
 
         <!-- MODULE 3 (PART 2): 2D MOTOR KINEMATICS INTENT CANVAS -->
-        <div class="glass-panel rounded-2xl p-4 sm:p-5 flex flex-col relative">
-          <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-white/10">
+        <div class="glass-panel rounded-2xl p-3.5 sm:p-5 flex flex-col relative">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-white/10">
             <div>
-              <h3 class="text-sm font-bold text-white font-mono tracking-tight flex items-center space-x-2">
-                <span>BCI 2D MOTOR KINEMATIC TRAJECTORY TRACKER</span>
-                <span id="motorShieldBadge" class="text-[10px] font-normal px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">Motor Guard Active</span>
+              <h3 class="text-xs sm:text-sm font-bold text-white font-mono tracking-tight flex items-center space-x-1.5">
+                <span>BCI 2D MOTOR KINEMATIC TRACKER</span>
+                <span id="motorShieldBadge" class="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">Active</span>
               </h3>
-              <p class="text-[11px] font-mono text-zinc-400 mt-0.5">
-                Simulating Cortical Motor Cortex (C3/C4) Decoded Cursor Control Under Adversarial Perturbation
+              <p class="text-[10px] font-mono text-zinc-400 mt-0.5">
+                Motor Cortex (C3/C4) Decoded Cursor Control Under Adversarial Perturbation
               </p>
             </div>
             <div class="flex items-center space-x-2">
-              <button onclick="triggerMotorHijack()" class="px-2.5 py-1 text-[11px] font-mono rounded bg-rose-500/20 text-rose-300 border border-rose-500/40 hover:bg-rose-500/30 transition">
-                ⚡ Test Motor Hijack
+              <button onclick="triggerMotorHijack()" class="px-2.5 py-1 text-[11px] font-mono rounded bg-rose-500/20 text-rose-300 border border-rose-500/40 hover:bg-rose-500/30 transition min-h-[30px]">
+                ⚡ Test Hijack
               </button>
-              <button onclick="resetMotorCursor()" class="px-2 py-1 text-[11px] font-mono rounded bg-zinc-800 text-zinc-300 hover:text-white border border-white/10 transition">
-                ↻ Reset Trajectory
+              <button onclick="resetMotorCursor()" class="px-2.5 py-1 text-[11px] font-mono rounded bg-zinc-800 text-zinc-300 hover:text-white border border-white/10 transition min-h-[30px]">
+                ↻ Reset
               </button>
             </div>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-12 gap-4 mt-3 items-center">
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-3.5 mt-3 items-center">
             <!-- 2D Canvas Arena -->
-            <div class="md:col-span-7 relative h-[210px] bg-[#0c0c10] rounded-xl overflow-hidden border border-white/5">
+            <div class="md:col-span-7 relative h-[180px] sm:h-[210px] bg-[#0c0c10] rounded-xl overflow-hidden border border-white/5">
               <canvas id="motorCanvas" class="w-full h-full block"></canvas>
               
               <!-- Floating Legend -->
-              <div class="absolute top-2 left-2 pointer-events-none text-[10px] font-mono space-y-0.5 bg-black/70 backdrop-blur-sm p-1.5 rounded border border-white/5 text-zinc-300">
-                <div class="flex items-center space-x-1.5">
+              <div class="absolute top-2 left-2 pointer-events-none text-[9px] font-mono space-y-0.5 bg-black/75 backdrop-blur-sm p-1.5 rounded border border-white/5 text-zinc-300">
+                <div class="flex items-center space-x-1">
                   <span class="w-2 h-2 rounded-full bg-electric-emerald"></span>
                   <span>Intended Target: [Authorize $1.00]</span>
                 </div>
-                <div class="flex items-center space-x-1.5">
+                <div class="flex items-center space-x-1">
                   <span class="w-2 h-2 rounded-full bg-neon-crimson"></span>
                   <span>Adversary Zone: [Wire $50,000]</span>
                 </div>
               </div>
 
               <!-- Anomaly Detection Clamping Toast -->
-              <div id="motorAnomalyToast" class="absolute bottom-2 right-2 pointer-events-none transition-all duration-300 opacity-0 bg-emerald-950/85 border border-emerald-500/50 text-emerald-300 text-[10px] font-mono px-2.5 py-1 rounded shadow-lg">
-                ✓ GNN Intercepted Adversarial Kinematic Drift
+              <div id="motorAnomalyToast" class="absolute bottom-2 right-2 pointer-events-none transition-all duration-300 opacity-0 bg-emerald-950/85 border border-emerald-500/50 text-emerald-300 text-[9px] font-mono px-2 py-0.5 rounded shadow-lg">
+                ✓ GNN Intercepted Drift
               </div>
             </div>
 
             <!-- Kinematics Real-Time Diagnostics HUD -->
             <div class="md:col-span-5 flex flex-col justify-between space-y-2 font-mono text-xs">
-              <div class="p-2.5 rounded-lg bg-zinc-900/60 border border-white/5">
-                <div class="text-[10px] text-zinc-400">KINEMATIC VELOCITY ERROR (Δv)</div>
-                <div class="flex items-baseline justify-between mt-1">
-                  <span id="motorDeltaV" class="text-base font-bold text-white">0.024 m/s</span>
-                  <span class="text-[10px] text-electric-emerald font-semibold">&lt; 0.05 Nominal</span>
+              <div class="p-2 rounded-lg bg-zinc-900/60 border border-white/5">
+                <div class="text-[9px] text-zinc-400">KINEMATIC VELOCITY ERROR (Δv)</div>
+                <div class="flex items-baseline justify-between mt-0.5">
+                  <span id="motorDeltaV" class="text-sm font-bold text-white">0.024 m/s</span>
+                  <span class="text-[9px] text-electric-emerald font-semibold">&lt; 0.05 Nominal</span>
                 </div>
-                <div class="w-full bg-zinc-800 h-1.5 rounded-full overflow-hidden mt-1.5">
+                <div class="w-full bg-zinc-800 h-1.5 rounded-full overflow-hidden mt-1">
                   <div id="motorErrorBar" class="bg-electric-emerald h-full transition-all duration-300" style="width: 12%;"></div>
                 </div>
               </div>
 
-              <div class="p-2.5 rounded-lg bg-zinc-900/60 border border-white/5">
-                <div class="text-[10px] text-zinc-400">BIOPHYSICAL CONDUCTION COHERENCE</div>
-                <div class="flex items-baseline justify-between mt-1">
-                  <span id="plvDispersionVal" class="text-base font-bold text-white">0.742</span>
-                  <span class="text-[10px] text-ice-blue font-semibold">Physical Limit: 0.850</span>
+              <div class="p-2 rounded-lg bg-zinc-900/60 border border-white/5">
+                <div class="text-[9px] text-zinc-400">BIOPHYSICAL CONDUCTION COHERENCE</div>
+                <div class="flex items-baseline justify-between mt-0.5">
+                  <span id="plvDispersionVal" class="text-sm font-bold text-white">0.742</span>
+                  <span class="text-[9px] text-ice-blue font-semibold">Bound: 0.850</span>
                 </div>
-                <p class="text-[10px] text-zinc-400 mt-1">
-                  PGD attack artificially inflates C3-C4 coherence to &gt;0.98, violating human inter-hemispheric synaptic delay limits.
+                <p class="text-[9px] text-zinc-400 mt-1 leading-snug">
+                  PGD attack inflates C3-C4 coherence to &gt;0.98, violating human biophysical dispersion.
                 </p>
               </div>
 
-              <div class="flex items-center justify-between text-[11px] pt-1">
-                <span class="text-zinc-400">Motor Hijack Status:</span>
+              <div class="flex items-center justify-between text-[10px] pt-0.5">
+                <span class="text-zinc-400">Hijack Status:</span>
                 <span id="motorHijackStatus" class="font-bold text-electric-emerald">0.004% (BLOCKED)</span>
               </div>
             </div>
@@ -518,74 +558,74 @@
               <span class="w-2 h-2 rounded-full bg-neon-crimson animate-pulse"></span>
               <h3 class="text-xs font-bold text-white font-mono tracking-wider uppercase">Neural Interrogation Engine</h3>
             </div>
-            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-rose-500/10 text-rose-400 border border-rose-500/20">Active Probing</span>
+            <span class="text-[9px] font-mono px-2 py-0.5 rounded bg-rose-500/10 text-rose-400 border border-rose-500/20">Active Probing</span>
           </div>
 
           <!-- Stimulus Box Display (Subliminal RSVP Rapid Serial Visual Presentation <33ms) -->
-          <div class="mt-4 p-4 rounded-xl bg-black/90 border border-white/10 flex flex-col items-center justify-center relative overflow-hidden min-h-[160px]">
+          <div class="mt-3.5 p-3 sm:p-4 rounded-xl bg-black/90 border border-white/10 flex flex-col items-center justify-center relative overflow-hidden min-h-[150px]">
             
-            <div class="text-[10px] font-mono text-zinc-400 uppercase tracking-widest mb-1 flex items-center space-x-1.5">
-              <span>Visual Stimulus Display</span>
+            <div class="text-[9px] font-mono text-zinc-400 uppercase tracking-widest mb-1 flex items-center space-x-1.5">
+              <span>Stimulus Display</span>
               <span class="text-rose-400 font-bold">(<span id="stimulusDurationText">28.5 ms</span> Flicker)</span>
             </div>
 
             <!-- Big RSVP Flicker Target Card -->
-            <div id="stimulusCard" class="w-24 h-28 rounded-xl bg-gradient-to-b from-zinc-800 to-zinc-900 border border-white/20 flex flex-col items-center justify-center shadow-2xl transition-all duration-75 relative">
-              <span id="stimulusNumber" class="text-5xl font-mono font-black text-white">0</span>
-              <span id="stimulusSubtext" class="text-[9px] font-mono text-zinc-400 mt-1">PROBE_00</span>
+            <div id="stimulusCard" class="w-20 h-24 sm:w-24 sm:h-28 rounded-xl bg-gradient-to-b from-zinc-800 to-zinc-900 border border-white/20 flex flex-col items-center justify-center shadow-2xl transition-all duration-75 relative">
+              <span id="stimulusNumber" class="text-4xl sm:text-5xl font-mono font-black text-white">0</span>
+              <span id="stimulusSubtext" class="text-[8px] font-mono text-zinc-400 mt-1">PROBE_00</span>
               <div id="stimulusTargetFlag" class="absolute -top-1.5 -right-1.5 bg-rose-600 text-white text-[8px] font-mono px-1 rounded font-bold hidden">TARGET</div>
             </div>
 
-            <div class="mt-2 text-center text-[10px] font-mono text-zinc-500 flex items-center space-x-2">
+            <div class="mt-2 text-center text-[9px] sm:text-[10px] font-mono text-zinc-500 flex items-center space-x-2">
               <span>Secret Target: <strong class="text-zinc-200">7 - 4 - 9 - 2</strong></span>
               <span>•</span>
               <span id="stimulusFlashRate" class="text-ice-blue">Sub-33ms Prime</span>
             </div>
           </div>
 
-          <!-- One-Click Primary Action Button -->
-          <div class="mt-4">
-            <button id="launchAttackBtn" onclick="initiateAttackSequence()" class="w-full py-3 px-4 rounded-xl font-mono text-xs font-bold uppercase tracking-wider transition-all duration-200 flex items-center justify-center space-x-2 bg-gradient-to-r from-rose-600 to-rose-700 hover:from-rose-500 hover:to-rose-600 text-white shadow-lg glow-crimson active:scale-[0.98]">
-              <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-              <span>Initiate Neural Interrogation Sequence</span>
+          <!-- One-Click Primary Action Button with Touch Optimization (>44px height) -->
+          <div class="mt-3.5">
+            <button id="launchAttackBtn" onclick="initiateAttackSequence()" class="w-full py-3.5 px-4 rounded-xl font-mono text-xs font-bold uppercase tracking-wider transition-all duration-200 flex items-center justify-center space-x-2 bg-gradient-to-r from-rose-600 to-rose-700 hover:from-rose-500 hover:to-rose-600 text-white shadow-lg glow-crimson active:scale-[0.98] min-h-[46px]">
+              <svg class="w-4 h-4 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+              <span class="truncate">Initiate Neural Interrogation Sequence</span>
             </button>
           </div>
 
           <!-- Real-Time AI Credential Extraction HUD -->
-          <div class="mt-4 p-3 rounded-xl bg-zinc-900/70 border border-white/5 space-y-2.5">
-            <div class="flex items-center justify-between text-[11px] font-mono">
-              <span class="text-zinc-400">AI DECODER PIN EXTRACTION:</span>
-              <span id="decoderStatusBadge" class="text-zinc-400 font-semibold">IDLE</span>
+          <div class="mt-3.5 p-3 rounded-xl bg-zinc-900/70 border border-white/5 space-y-2">
+            <div class="flex items-center justify-between text-[10px] font-mono">
+              <span class="text-zinc-400">AI PIN EXTRACTION:</span>
+              <span id="decoderStatusBadge" class="text-zinc-400 font-semibold truncate">IDLE</span>
             </div>
 
             <!-- 4 Digits Reconstruction HUD -->
             <div class="grid grid-cols-4 gap-1.5 font-mono text-center">
-              <div class="p-2 rounded bg-black/50 border border-white/5">
-                <div class="text-[9px] text-zinc-500">DIGIT 1</div>
-                <div id="pinSlot1" class="text-lg font-bold text-zinc-600 mt-0.5">?</div>
-                <div id="pinConf1" class="text-[9px] text-zinc-500">0.0%</div>
+              <div class="p-1.5 rounded bg-black/50 border border-white/5">
+                <div class="text-[8px] text-zinc-500">DIGIT 1</div>
+                <div id="pinSlot1" class="text-base sm:text-lg font-bold text-zinc-600 mt-0.5">?</div>
+                <div id="pinConf1" class="text-[8px] text-zinc-500">0.0%</div>
               </div>
-              <div class="p-2 rounded bg-black/50 border border-white/5">
-                <div class="text-[9px] text-zinc-500">DIGIT 2</div>
-                <div id="pinSlot2" class="text-lg font-bold text-zinc-600 mt-0.5">?</div>
-                <div id="pinConf2" class="text-[9px] text-zinc-500">0.0%</div>
+              <div class="p-1.5 rounded bg-black/50 border border-white/5">
+                <div class="text-[8px] text-zinc-500">DIGIT 2</div>
+                <div id="pinSlot2" class="text-base sm:text-lg font-bold text-zinc-600 mt-0.5">?</div>
+                <div id="pinConf2" class="text-[8px] text-zinc-500">0.0%</div>
               </div>
-              <div class="p-2 rounded bg-black/50 border border-white/5">
-                <div class="text-[9px] text-zinc-500">DIGIT 3</div>
-                <div id="pinSlot3" class="text-lg font-bold text-zinc-600 mt-0.5">?</div>
-                <div id="pinConf3" class="text-[9px] text-zinc-500">0.0%</div>
+              <div class="p-1.5 rounded bg-black/50 border border-white/5">
+                <div class="text-[8px] text-zinc-500">DIGIT 3</div>
+                <div id="pinSlot3" class="text-base sm:text-lg font-bold text-zinc-600 mt-0.5">?</div>
+                <div id="pinConf3" class="text-[8px] text-zinc-500">0.0%</div>
               </div>
-              <div class="p-2 rounded bg-black/50 border border-white/5">
-                <div class="text-[9px] text-zinc-500">DIGIT 4</div>
-                <div id="pinSlot4" class="text-lg font-bold text-zinc-600 mt-0.5">?</div>
-                <div id="pinConf4" class="text-[9px] text-zinc-500">0.0%</div>
+              <div class="p-1.5 rounded bg-black/50 border border-white/5">
+                <div class="text-[8px] text-zinc-500">DIGIT 4</div>
+                <div id="pinSlot4" class="text-base sm:text-lg font-bold text-zinc-600 mt-0.5">?</div>
+                <div id="pinConf4" class="text-[8px] text-zinc-500">0.0%</div>
               </div>
             </div>
 
             <!-- Live mutual information leakage bar -->
-            <div class="pt-1">
-              <div class="flex justify-between text-[10px] font-mono text-zinc-400 mb-1">
-                <span>Mutual Information Leakage: <strong id="miLeakageVal" class="text-electric-emerald">0.038 bits</strong></span>
+            <div class="pt-0.5">
+              <div class="flex justify-between text-[9px] font-mono text-zinc-400 mb-1">
+                <span>MI Leakage: <strong id="miLeakageVal" class="text-electric-emerald">0.038 bits</strong></span>
                 <span id="miThresholdText" class="text-zinc-500">Bound: 0.18 bits</span>
               </div>
               <div class="w-full bg-zinc-800 h-1.5 rounded-full overflow-hidden">
@@ -593,7 +633,7 @@
               </div>
             </div>
 
-            <div id="attackResultBanner" class="p-2 rounded bg-emerald-950/40 border border-emerald-500/20 text-[11px] font-mono text-emerald-300 leading-snug">
+            <div id="attackResultBanner" class="p-2 rounded bg-emerald-950/40 border border-emerald-500/20 text-[10px] font-mono text-emerald-300 leading-snug">
               ✓ <strong>Neuro-Shield Active:</strong> P300 peak flattened via ε-LDP subspace projection. Decoder guessing at chance floor (&lt;10.2%).
             </div>
           </div>
@@ -602,59 +642,59 @@
 
         <!-- MODULE 5: DETERMINISTIC EXPERIMENT REPLAY ENGINE -->
         <div class="glass-panel rounded-2xl p-4 sm:p-5 flex flex-col relative border border-white/10">
-          <div class="flex items-center justify-between pb-3 border-b border-white/10">
-            <div class="flex items-center space-x-2">
+          <div class="flex items-center justify-between pb-2.5 border-b border-white/10">
+            <div class="flex items-center space-x-1.5">
               <span class="w-2 h-2 rounded-full bg-ice-blue"></span>
-              <h3 class="text-xs font-bold text-white font-mono tracking-wider uppercase">Deterministic Replay Engine</h3>
+              <h3 class="text-xs font-bold text-white font-mono tracking-wider uppercase">Deterministic Replay</h3>
             </div>
-            <span id="recordStatusBadge" class="text-[10px] font-mono text-zinc-400">Fixed Seed Verification</span>
+            <span id="recordStatusBadge" class="text-[9px] font-mono text-zinc-400">Fixed Seed</span>
           </div>
 
-          <p class="text-[11px] text-zinc-400 mt-2 font-mono leading-relaxed">
+          <p class="text-[10px] text-zinc-400 mt-2 font-mono leading-relaxed">
             Verify academic reproducibility: replay the exact same telemetry stream with Neuro-Shield enabled versus disabled.
           </p>
 
           <!-- Record Current Telemetry Button -->
-          <div class="mt-3">
-            <button id="captureRunBtn" onclick="captureCurrentTelemetryRun()" class="w-full py-2 px-3 rounded-lg bg-zinc-800 hover:bg-zinc-700 border border-white/10 font-mono text-xs text-white flex items-center justify-center space-x-2 transition">
+          <div class="mt-2.5">
+            <button id="captureRunBtn" onclick="captureCurrentTelemetryRun()" class="w-full py-2.5 px-3 rounded-lg bg-zinc-800 hover:bg-zinc-700 border border-white/10 font-mono text-xs text-white flex items-center justify-center space-x-2 transition min-h-[38px]">
               <span id="recordDot" class="w-2 h-2 rounded-full bg-rose-500"></span>
-              <span id="recordBtnLabel">Capture & Record Current Telemetry Run</span>
+              <span id="recordBtnLabel" class="truncate">Capture & Record Current Telemetry Run</span>
             </button>
           </div>
 
           <!-- Deterministic Seed Selector -->
-          <div class="mt-3 flex items-center justify-between gap-2 text-xs font-mono">
-            <span class="text-zinc-400">Dataset Seed:</span>
-            <select id="replaySeedSelect" onchange="loadPresetSeed(this.value)" class="bg-zinc-900 border border-white/10 rounded px-2 py-1 text-zinc-300 text-xs focus:outline-none">
-              <option value="A709">Seed #A709 (Subliminal P300 Bank PIN)</option>
-              <option value="B412">Seed #B412 (Adversarial PGD Motor Hijack)</option>
-              <option value="C883">Seed #C883 (Nominal Baseline Multitask)</option>
+          <div class="mt-2.5 flex items-center justify-between gap-2 text-xs font-mono">
+            <span class="text-zinc-400 text-[11px]">Seed:</span>
+            <select id="replaySeedSelect" onchange="loadPresetSeed(this.value)" class="bg-zinc-900 border border-white/10 rounded px-2 py-1 text-zinc-300 text-xs focus:outline-none min-h-[32px] max-w-[210px] truncate">
+              <option value="A709">Seed #A709 (P300 PIN 7492)</option>
+              <option value="B412">Seed #B412 (PGD Motor Hijack)</option>
+              <option value="C883">Seed #C883 (Nominal Baseline)</option>
             </select>
           </div>
 
           <!-- Head-to-Head Replay Action Buttons -->
-          <div class="grid grid-cols-2 gap-2 mt-3 font-mono text-xs">
-            <button onclick="startDeterministicReplay(false)" class="p-2.5 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-300 hover:bg-rose-500/20 transition flex flex-col items-center text-center">
-              <span class="font-bold">Replay: VULNERABLE</span>
-              <span class="text-[10px] text-rose-400/80 mt-0.5">Neuro-Shield Disabled</span>
+          <div class="grid grid-cols-2 gap-2 mt-2.5 font-mono text-xs">
+            <button onclick="startDeterministicReplay(false)" class="p-2 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-300 hover:bg-rose-500/20 transition flex flex-col items-center text-center min-h-[44px] justify-center">
+              <span class="font-bold text-[11px]">Replay: VULNERABLE</span>
+              <span class="text-[9px] text-rose-400/80">Shield Disabled</span>
             </button>
-            <button onclick="startDeterministicReplay(true)" class="p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 hover:bg-emerald-500/20 transition flex flex-col items-center text-center">
-              <span class="font-bold">Replay: PROTECTED</span>
-              <span class="text-[10px] text-emerald-400/80 mt-0.5">Neuro-Shield Enabled</span>
+            <button onclick="startDeterministicReplay(true)" class="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 hover:bg-emerald-500/20 transition flex flex-col items-center text-center min-h-[44px] justify-center">
+              <span class="font-bold text-[11px]">Replay: PROTECTED</span>
+              <span class="text-[9px] text-emerald-400/80">Shield Enabled</span>
             </button>
           </div>
 
           <!-- Replay Scrub Timeline -->
-          <div class="mt-3 p-2 rounded-lg bg-zinc-900/60 border border-white/5 space-y-1.5 font-mono text-[10px]">
+          <div class="mt-2.5 p-2 rounded-lg bg-zinc-900/60 border border-white/5 space-y-1 font-mono text-[9px]">
             <div class="flex items-center justify-between text-zinc-400">
               <span>REPLAY PACKET BUFFER</span>
               <span id="replayTimecode">0.00s / 2.00s</span>
             </div>
             <input id="replayScrubSlider" type="range" min="0" max="500" value="0" oninput="scrubReplay(this.value)" class="w-full">
             <div class="flex items-center justify-between text-zinc-500">
-              <span>t = 0 ms</span>
-              <span class="text-rose-400 font-bold">t = 300 ms (P300 Peak)</span>
-              <span>t = 2000 ms</span>
+              <span>0 ms</span>
+              <span class="text-rose-400 font-bold">300 ms (P300 Peak)</span>
+              <span>2000 ms</span>
             </div>
           </div>
 
@@ -665,163 +705,171 @@
     </div>
 
     <!-- MIDDLE SECTION: INTERACTIVE NEURAL PIPELINE ARCHITECTURE MAP (MODULE 4) -->
-    <section class="glass-panel rounded-2xl p-5 sm:p-6 flex flex-col relative border border-white/10">
+    <section class="glass-panel rounded-2xl p-4 sm:p-6 flex flex-col relative border border-white/10">
       
-      <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-white/10">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-white/10">
         <div>
-          <h3 class="text-sm font-bold text-white font-mono tracking-tight flex items-center space-x-2">
-            <span>END-TO-END NEURAL SIGNAL FLOW ARCHITECTURE</span>
-            <span class="text-[10px] font-normal px-2 py-0.5 rounded-full bg-ice-blue/10 text-ice-blue border border-ice-blue/30">Click Nodes to Inspect Math & Telemetry</span>
+          <h3 class="text-xs sm:text-sm font-bold text-white font-mono tracking-tight flex items-center space-x-1.5">
+            <span>NEURAL SIGNAL FLOW ARCHITECTURE</span>
+            <span class="text-[9px] px-1.5 py-0.2 rounded bg-ice-blue/10 text-ice-blue border border-ice-blue/30">Tap Node</span>
           </h3>
-          <p class="text-xs font-mono text-zinc-400 mt-1">
-            Zero-Trust Neural Pipeline: from scalp surface potential to validated zero-trust actuator command
+          <p class="text-[10px] font-mono text-zinc-400 mt-0.5">
+            Zero-Trust Neural Pipeline from scalp surface potential to validated zero-trust actuator command
           </p>
         </div>
-        <div class="text-[11px] font-mono text-zinc-400">
-          Overhead: <strong class="text-electric-emerald font-bold">+1.8 ms ASIC Hardware Path</strong> (vs +45.2 ms Cloud)
+        <div class="text-[10px] font-mono text-zinc-400 flex items-center space-x-1">
+          <span>Latency:</span>
+          <strong class="text-electric-emerald font-bold">+1.8 ms ASIC</strong>
+          <span class="text-zinc-600">(vs +45.2ms Cloud)</span>
         </div>
       </div>
 
-      <!-- Pipeline Block Flow (5-stage interactive nodes) -->
-      <div class="grid grid-cols-1 md:grid-cols-5 gap-3 mt-4">
+      <!-- Mobile Hint Indicator -->
+      <div class="md:hidden text-[9px] font-mono text-zinc-500 pt-1 flex items-center justify-between">
+        <span>← Swipe nodes horizontally to inspect →</span>
+        <span class="text-ice-blue">5 Processing Stages</span>
+      </div>
+
+      <!-- Pipeline Block Flow (Smooth Horizontal Swipe Carousel on Mobile, Grid on Desktop) -->
+      <div class="flex md:grid md:grid-cols-5 gap-2.5 mt-2 overflow-x-auto pb-2 no-scrollbar snap-x">
         
         <!-- Node 1 -->
-        <div id="pipeNode1" onclick="selectPipelineNode(1)" class="cursor-pointer p-3.5 rounded-xl bg-zinc-900/90 border border-white/10 hover:border-ice-blue/50 hover:bg-zinc-800/80 transition-all group">
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-300">NODE 01</span>
+        <div id="pipeNode1" onclick="selectPipelineNode(1)" class="cursor-pointer p-3 rounded-xl bg-zinc-900/90 border border-white/10 hover:border-ice-blue/50 hover:bg-zinc-800/80 transition-all group min-w-[190px] md:min-w-0 flex-shrink-0 snap-start">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded bg-zinc-800 text-zinc-300">NODE 01</span>
             <span class="w-2 h-2 rounded-full bg-ice-blue"></span>
           </div>
           <h4 class="text-xs font-bold text-white group-hover:text-ice-blue transition">Cortical Interface</h4>
-          <p class="text-[11px] text-zinc-400 mt-1 font-mono">10-20 Scalp Montage (8 Ch)</p>
-          <div class="mt-2 text-[10px] text-zinc-500 font-mono">Raw microvolts: \(V_i(t)\)</div>
+          <p class="text-[10px] text-zinc-400 mt-0.5 font-mono">10-20 Scalp (8 Ch)</p>
+          <div class="mt-1.5 text-[9px] text-zinc-500 font-mono">Raw: \(V_i(t)\)</div>
         </div>
 
         <!-- Node 2 -->
-        <div id="pipeNode2" onclick="selectPipelineNode(2)" class="cursor-pointer p-3.5 rounded-xl bg-zinc-900/90 border border-white/10 hover:border-ice-blue/50 hover:bg-zinc-800/80 transition-all group">
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-300">NODE 02</span>
+        <div id="pipeNode2" onclick="selectPipelineNode(2)" class="cursor-pointer p-3 rounded-xl bg-zinc-900/90 border border-white/10 hover:border-ice-blue/50 hover:bg-zinc-800/80 transition-all group min-w-[190px] md:min-w-0 flex-shrink-0 snap-start">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded bg-zinc-800 text-zinc-300">NODE 02</span>
             <span class="w-2 h-2 rounded-full bg-ice-blue"></span>
           </div>
-          <h4 class="text-xs font-bold text-white group-hover:text-ice-blue transition">Analog Front-End (AFE)</h4>
-          <p class="text-[11px] text-zinc-400 mt-1 font-mono">250 Hz Digitizer & Filter</p>
-          <div class="mt-2 text-[10px] text-zinc-500 font-mono">0.5 – 50 Hz Bandpass</div>
+          <h4 class="text-xs font-bold text-white group-hover:text-ice-blue transition">AFE Digitizer</h4>
+          <p class="text-[10px] text-zinc-400 mt-0.5 font-mono">250 Hz Filtered</p>
+          <div class="mt-1.5 text-[9px] text-zinc-500 font-mono">0.5 – 50 Hz Bandpass</div>
         </div>
 
         <!-- Node 3 (Stage 1 Shield) -->
-        <div id="pipeNode3" onclick="selectPipelineNode(3)" class="cursor-pointer p-3.5 rounded-xl bg-emerald-950/30 border border-emerald-500/40 hover:border-emerald-400 hover:bg-emerald-950/50 transition-all group glow-emerald">
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300">STAGE 01 DEFENSE</span>
+        <div id="pipeNode3" onclick="selectPipelineNode(3)" class="cursor-pointer p-3 rounded-xl bg-emerald-950/30 border border-emerald-500/40 hover:border-emerald-400 hover:bg-emerald-950/50 transition-all group glow-emerald min-w-[190px] md:min-w-0 flex-shrink-0 snap-start">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300">STAGE 01</span>
             <span class="w-2 h-2 rounded-full bg-electric-emerald animate-pulse"></span>
           </div>
-          <h4 class="text-xs font-bold text-emerald-300 group-hover:text-emerald-200 transition">On-Chip ε-LDP Scrambler</h4>
-          <p class="text-[11px] text-emerald-400/80 mt-1 font-mono">Orthogonal Subspace Projection</p>
-          <div class="mt-2 text-[10px] text-emerald-400/70 font-mono">Laplace Noise: \(Z = P_\perp X + w\)</div>
+          <h4 class="text-xs font-bold text-emerald-300 group-hover:text-emerald-200 transition">ε-LDP Scrambler</h4>
+          <p class="text-[10px] text-emerald-400/80 mt-0.5 font-mono">Subspace Projection</p>
+          <div class="mt-1.5 text-[9px] text-emerald-400/70 font-mono">Laplace: \(Z = P_\perp X + w\)</div>
         </div>
 
         <!-- Node 4 (Stage 2 Shield) -->
-        <div id="pipeNode4" onclick="selectPipelineNode(4)" class="cursor-pointer p-3.5 rounded-xl bg-emerald-950/30 border border-emerald-500/40 hover:border-emerald-400 hover:bg-emerald-950/50 transition-all group glow-emerald">
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300">STAGE 02 DEFENSE</span>
+        <div id="pipeNode4" onclick="selectPipelineNode(4)" class="cursor-pointer p-3 rounded-xl bg-emerald-950/30 border border-emerald-500/40 hover:border-emerald-400 hover:bg-emerald-950/50 transition-all group glow-emerald min-w-[190px] md:min-w-0 flex-shrink-0 snap-start">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300">STAGE 02</span>
             <span class="w-2 h-2 rounded-full bg-electric-emerald animate-pulse"></span>
           </div>
-          <h4 class="text-xs font-bold text-emerald-300 group-hover:text-emerald-200 transition">Biophysical GNN & PLV</h4>
-          <p class="text-[11px] text-emerald-400/80 mt-1 font-mono">Cortical Dispersion Verifier</p>
-          <div class="mt-2 text-[10px] text-emerald-400/70 font-mono">AIRM Covariance Metric</div>
+          <h4 class="text-xs font-bold text-emerald-300 group-hover:text-emerald-200 transition">Biophysical GNN</h4>
+          <p class="text-[10px] text-emerald-400/80 mt-0.5 font-mono">Cortical PLV Engine</p>
+          <div class="mt-1.5 text-[9px] text-emerald-400/70 font-mono">AIRM Covariance Metric</div>
         </div>
 
         <!-- Node 5 -->
-        <div id="pipeNode5" onclick="selectPipelineNode(5)" class="cursor-pointer p-3.5 rounded-xl bg-zinc-900/90 border border-white/10 hover:border-ice-blue/50 hover:bg-zinc-800/80 transition-all group">
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-300">NODE 05</span>
+        <div id="pipeNode5" onclick="selectPipelineNode(5)" class="cursor-pointer p-3 rounded-xl bg-zinc-900/90 border border-white/10 hover:border-ice-blue/50 hover:bg-zinc-800/80 transition-all group min-w-[190px] md:min-w-0 flex-shrink-0 snap-start">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded bg-zinc-800 text-zinc-300">NODE 05</span>
             <span class="w-2 h-2 rounded-full bg-ice-blue"></span>
           </div>
           <h4 class="text-xs font-bold text-white group-hover:text-ice-blue transition">Zero-Trust Actuator</h4>
-          <p class="text-[11px] text-zinc-400 mt-1 font-mono">Validated Motor Intent</p>
-          <div class="mt-2 text-[10px] text-zinc-500 font-mono">Host OS Cryptographic Gate</div>
+          <p class="text-[10px] text-zinc-400 mt-0.5 font-mono">Motor Output Gate</p>
+          <div class="mt-1.5 text-[9px] text-zinc-500 font-mono">Host OS Cryptographic</div>
         </div>
 
       </div>
 
       <!-- Active Pipeline Node Theoretical Inspector Panel -->
-      <div id="pipelineDetailBox" class="mt-4 p-4 rounded-xl bg-zinc-900/80 border border-white/10 font-mono text-xs">
+      <div id="pipelineDetailBox" class="mt-3 p-3.5 rounded-xl bg-zinc-900/80 border border-white/10 font-mono text-xs">
         <!-- Rendered dynamically by selectPipelineNode() -->
       </div>
 
     </section>
 
     <!-- LOWER SECTION: SPECIALIST RESEARCH DASHBOARD & BENCHMARK MATRIX (MODULE 6 & 4) -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
 
       <!-- LEFT: SPECIALIST RESEARCH CONTROLS DRAWER (MODULE 6) -->
-      <div class="lg:col-span-5 glass-panel rounded-2xl p-5 flex flex-col justify-between space-y-4 border border-white/10">
+      <div class="lg:col-span-5 glass-panel rounded-2xl p-4 sm:p-5 flex flex-col justify-between space-y-4 border border-white/10">
         <div>
           <div class="flex items-center justify-between pb-3 border-b border-white/10">
-            <div class="flex items-center space-x-2">
+            <div class="flex items-center space-x-1.5">
               <span class="w-2 h-2 rounded-full bg-cyber-amber"></span>
-              <h3 class="text-xs font-bold text-white font-mono tracking-wider uppercase">Research Parameters & Edge Cases</h3>
+              <h3 class="text-xs font-bold text-white font-mono tracking-wider uppercase">Research Parameters</h3>
             </div>
-            <span class="text-[10px] font-mono text-zinc-400">Live Mathematical Sensitivity</span>
+            <span class="text-[10px] font-mono text-zinc-400">Live Sensitivity</span>
           </div>
 
-          <div class="space-y-4 mt-4 font-mono text-xs">
+          <div class="space-y-4 mt-3.5 font-mono text-xs">
             
-            <!-- Slider 1: Privacy Budget (ε) -->
+            <!-- Slider 1: Privacy Budget (ε) with Touch Optimizations -->
             <div>
               <div class="flex justify-between items-baseline mb-1">
-                <span class="text-zinc-300">Privacy Budget (ε):</span>
+                <span class="text-zinc-300 text-xs">Privacy Budget (ε):</span>
                 <span class="text-ice-blue font-bold text-sm" id="epsilonValDisplay">0.50</span>
               </div>
               <input id="epsilonSlider" type="range" min="0.1" max="5.0" step="0.1" value="0.5" oninput="updateParameters()" class="w-full">
-              <div class="flex justify-between text-[10px] text-zinc-500 mt-1">
-                <span>0.1 (Military Entropy)</span>
-                <span class="text-electric-emerald font-bold">0.5 (Optimal Balance)</span>
+              <div class="flex justify-between text-[9px] text-zinc-500 mt-1">
+                <span>0.1 (Max Entropy)</span>
+                <span class="text-electric-emerald font-bold">0.5 (Optimal)</span>
                 <span>5.0 (Unprotected)</span>
               </div>
-              <div class="mt-2 p-2 rounded bg-black/40 border border-white/5 text-[11px] text-zinc-400">
-                Injected Laplace scale: <strong id="laplaceScaleDisplay" class="text-zinc-200">σ = 14.14 µV</strong> • MI Leakage: <strong id="paramMiDisplay" class="text-electric-emerald">0.038 bits</strong>
+              <div class="mt-1.5 p-2 rounded bg-black/40 border border-white/5 text-[10px] text-zinc-400">
+                Injected Laplace scale: <strong id="laplaceScaleDisplay" class="text-zinc-200">σ = 14.14 µV</strong> • MI: <strong id="paramMiDisplay" class="text-electric-emerald">0.038 bits</strong>
               </div>
             </div>
 
             <!-- Slider 2: Biophysical Phase-Locking Threshold (τ_PLV) -->
             <div>
               <div class="flex justify-between items-baseline mb-1">
-                <span class="text-zinc-300">Biophysical PLV Threshold (τ<sub>PLV</sub>):</span>
+                <span class="text-zinc-300 text-xs">Biophysical PLV Threshold (τ<sub>PLV</sub>):</span>
                 <span class="text-cyber-amber font-bold text-sm" id="plvValDisplay">0.85</span>
               </div>
               <input id="plvSlider" type="range" min="0.2" max="0.98" step="0.02" value="0.85" oninput="updateParameters()" class="w-full">
-              <div class="flex justify-between text-[10px] text-zinc-500 mt-1">
-                <span>0.20 (Hypersensitive)</span>
-                <span class="text-cyber-amber font-bold">0.85 (Cortical Conduction Bound)</span>
+              <div class="flex justify-between text-[9px] text-zinc-500 mt-1">
+                <span>0.20 (Strict)</span>
+                <span class="text-cyber-amber font-bold">0.85 (Cortical Bound)</span>
                 <span>0.98 (Permissive)</span>
               </div>
             </div>
 
             <!-- Noise Distribution Radio Switch -->
             <div>
-              <label class="text-zinc-300 block mb-1.5 text-[11px] uppercase tracking-wider text-zinc-400">Noise Injection Distribution:</label>
-              <div class="grid grid-cols-3 gap-2">
-                <button id="noiseBtnLaplace" onclick="setNoiseType('laplace')" class="py-1.5 px-2 rounded bg-ice-blue/20 text-ice-blue border border-ice-blue/40 text-center font-bold text-[11px]">
+              <label class="text-zinc-300 block mb-1 text-[10px] uppercase tracking-wider text-zinc-400">Noise Distribution:</label>
+              <div class="grid grid-cols-3 gap-1.5">
+                <button id="noiseBtnLaplace" onclick="setNoiseType('laplace')" class="py-2 px-1.5 rounded bg-ice-blue/20 text-ice-blue border border-ice-blue/40 text-center font-bold text-[10px] min-h-[38px] flex items-center justify-center">
                   Laplace (ε-DP)
                 </button>
-                <button id="noiseBtnGaussian" onclick="setNoiseType('gaussian')" class="py-1.5 px-2 rounded bg-zinc-900 text-zinc-400 border border-white/5 hover:border-white/20 text-center text-[11px]">
+                <button id="noiseBtnGaussian" onclick="setNoiseType('gaussian')" class="py-2 px-1.5 rounded bg-zinc-900 text-zinc-400 border border-white/5 hover:border-white/20 text-center text-[10px] min-h-[38px] flex items-center justify-center">
                   Gaussian (δ-DP)
                 </button>
-                <button id="noiseBtnPink" onclick="setNoiseType('pink')" class="py-1.5 px-2 rounded bg-zinc-900 text-zinc-400 border border-white/5 hover:border-white/20 text-center text-[11px]">
-                  Adversarial 1/f
+                <button id="noiseBtnPink" onclick="setNoiseType('pink')" class="py-2 px-1.5 rounded bg-zinc-900 text-zinc-400 border border-white/5 hover:border-white/20 text-center text-[10px] min-h-[38px] flex items-center justify-center">
+                  Pink (1/f)
                 </button>
               </div>
             </div>
 
             <!-- Active Attack Vector Selector -->
             <div>
-              <label class="text-zinc-300 block mb-1.5 text-[11px] uppercase tracking-wider text-zinc-400">Target Exploit Simulation:</label>
-              <div class="grid grid-cols-2 gap-2">
-                <button id="attackTypeP300" onclick="setAttackType('p300')" class="py-2 px-2.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/40 text-left font-medium text-[11px] flex items-center justify-between">
-                  <span>Subliminal P300 Oddball</span>
+              <label class="text-zinc-300 block mb-1 text-[10px] uppercase tracking-wider text-zinc-400">Target Attack Simulation:</label>
+              <div class="grid grid-cols-2 gap-1.5">
+                <button id="attackTypeP300" onclick="setAttackType('p300')" class="py-2.5 px-2.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/40 text-left font-medium text-[11px] flex items-center justify-between min-h-[42px]">
+                  <span>P300 Oddball</span>
                   <span class="text-xs">⚡</span>
                 </button>
-                <button id="attackTypeMotor" onclick="setAttackType('motor')" class="py-2 px-2.5 rounded bg-zinc-900 text-zinc-400 border border-white/5 hover:border-white/20 text-left font-medium text-[11px] flex items-center justify-between">
-                  <span>Adversarial PGD Motor</span>
+                <button id="attackTypeMotor" onclick="setAttackType('motor')" class="py-2.5 px-2.5 rounded bg-zinc-900 text-zinc-400 border border-white/5 hover:border-white/20 text-left font-medium text-[11px] flex items-center justify-between min-h-[42px]">
+                  <span>PGD Motor</span>
                   <span class="text-xs">🎯</span>
                 </button>
               </div>
@@ -830,81 +878,86 @@
           </div>
         </div>
 
-        <div class="p-3 rounded-xl bg-zinc-900/60 border border-white/5 text-[11px] font-mono text-zinc-400">
+        <div class="p-3 rounded-xl bg-zinc-900/60 border border-white/5 text-[10px] font-mono text-zinc-400">
           <span class="text-zinc-200 font-bold">Biophysical Dispersion Proof:</span>
-          Adversarial noise algorithms optimize loss against the deep decoder, forcing synthetic phase sync across distantly separated electrodes that violates:
+          Adversarial noise violates physical inter-electrode conduction decay bounds:
           $$A_{ij} = \exp\left(-\frac{\|\mathbf{r}_i - \mathbf{r}_j\|^2}{2\lambda^2}\right)$$
         </div>
       </div>
 
       <!-- RIGHT: RIGOROUS BENCHMARK MATRIX (SPEC 4) -->
-      <div class="lg:col-span-7 glass-panel rounded-2xl p-5 flex flex-col justify-between border border-white/10 overflow-x-auto">
+      <div class="lg:col-span-7 glass-panel rounded-2xl p-4 sm:p-5 flex flex-col justify-between border border-white/10">
         <div>
           <div class="flex items-center justify-between pb-3 border-b border-white/10">
-            <div class="flex items-center space-x-2">
+            <div class="flex items-center space-x-1.5">
               <span class="w-2 h-2 rounded-full bg-electric-emerald"></span>
-              <h3 class="text-xs font-bold text-white font-mono tracking-wider uppercase">Empirical Benchmark Matrix (N = 1,200 Trials)</h3>
+              <h3 class="text-xs font-bold text-white font-mono tracking-wider uppercase">Empirical Benchmark (N = 1,200)</h3>
             </div>
-            <span class="text-[10px] font-mono text-zinc-400">Peer-Reviewed Protocol</span>
+            <span class="text-[9px] font-mono text-zinc-400">Peer-Reviewed Protocol</span>
           </div>
 
-          <!-- Benchmark Table -->
-          <div class="mt-4 overflow-x-auto">
-            <table class="w-full text-left font-mono text-xs">
+          <!-- Mobile Hint for Horizontal Swipe Table -->
+          <div class="sm:hidden text-[9px] font-mono text-zinc-500 pt-1.5 pb-0.5">
+            <span>← Swipe table horizontally to compare systems →</span>
+          </div>
+
+          <!-- Benchmark Table with Sticky First Column for Mobile -->
+          <div class="mt-2 overflow-x-auto no-scrollbar">
+            <table class="w-full text-left font-mono text-xs min-w-[500px]">
               <thead>
-                <tr class="border-b border-white/10 text-zinc-400 text-[10px] uppercase tracking-wider">
-                  <th class="pb-2">Evaluation Metric</th>
-                  <th class="pb-2 text-rose-400">Unprotected BCI</th>
-                  <th class="pb-2 text-zinc-400">Standard Cyber TLS</th>
-                  <th class="pb-2 text-electric-emerald font-bold">Neuro-Shield ASIC</th>
+                <tr class="border-b border-white/10 text-zinc-400 text-[9px] sm:text-[10px] uppercase tracking-wider">
+                  <th class="pb-2 sticky-col">Evaluation Metric</th>
+                  <th class="pb-2 text-rose-400 px-2">Unprotected BCI</th>
+                  <th class="pb-2 text-zinc-400 px-2">Standard Cyber TLS</th>
+                  <th class="pb-2 text-electric-emerald font-bold px-2">Neuro-Shield ASIC</th>
                 </tr>
               </thead>
-              <tbody class="divide-y divide-white/5 text-zinc-300 text-[11px]">
+              <tbody class="divide-y divide-white/5 text-zinc-300 text-[10px] sm:text-[11px]">
                 <tr>
-                  <td class="py-2.5 font-sans font-medium text-white">Subliminal P300 Credential Extraction</td>
-                  <td class="py-2.5 text-rose-400 font-bold">98.4% (Breached)</td>
-                  <td class="py-2.5 text-rose-400">98.4% (TLS blind to content)</td>
-                  <td class="py-2.5 text-electric-emerald font-bold">&lt; 10.2% (Chance Floor)</td>
+                  <td class="py-2.5 font-sans font-medium text-white sticky-col">Subliminal P300 Credential Extraction</td>
+                  <td class="py-2.5 text-rose-400 font-bold px-2">98.4% (Breached)</td>
+                  <td class="py-2.5 text-rose-400 px-2">98.4% (TLS blind)</td>
+                  <td class="py-2.5 text-electric-emerald font-bold px-2">&lt; 10.2% (Chance Floor)</td>
                 </tr>
                 <tr>
-                  <td class="py-2.5 font-sans font-medium text-white">Adversarial PGD Kinematics Hijack</td>
-                  <td class="py-2.5 text-rose-400 font-bold">100.0% (Hijacked)</td>
-                  <td class="py-2.5 text-amber-400">87.2% (Ineffective)</td>
-                  <td class="py-2.5 text-electric-emerald font-bold">0.004% (Neutralized)</td>
+                  <td class="py-2.5 font-sans font-medium text-white sticky-col">Adversarial PGD Kinematics Hijack</td>
+                  <td class="py-2.5 text-rose-400 font-bold px-2">100.0% (Hijacked)</td>
+                  <td class="py-2.5 text-amber-400 px-2">87.2%</td>
+                  <td class="py-2.5 text-electric-emerald font-bold px-2">0.004% (Neutralized)</td>
                 </tr>
                 <tr>
-                  <td class="py-2.5 font-sans font-medium text-white">Telemetry Processing Latency Overhead</td>
-                  <td class="py-2.5 text-zinc-400">0.0 ms (Baseline)</td>
-                  <td class="py-2.5 text-rose-400">+45.2 ms (Cloud Round-Trip)</td>
-                  <td class="py-2.5 text-electric-emerald font-bold">+1.8 ms (Hardware ASIC)</td>
+                  <td class="py-2.5 font-sans font-medium text-white sticky-col">Processing Latency Overhead</td>
+                  <td class="py-2.5 text-zinc-400 px-2">0.0 ms (Base)</td>
+                  <td class="py-2.5 text-rose-400 px-2">+45.2 ms (Cloud)</td>
+                  <td class="py-2.5 text-electric-emerald font-bold px-2">+1.8 ms (Hardware ASIC)</td>
                 </tr>
                 <tr>
-                  <td class="py-2.5 font-sans font-medium text-white">Motor Kinematic Intent Preservation</td>
-                  <td class="py-2.5 text-zinc-300">100.0%</td>
-                  <td class="py-2.5 text-zinc-300">92.4%</td>
-                  <td class="py-2.5 text-electric-emerald font-bold">98.6% (Near-Lossless)</td>
+                  <td class="py-2.5 font-sans font-medium text-white sticky-col">Kinematic Intent Preservation</td>
+                  <td class="py-2.5 text-zinc-300 px-2">100.0%</td>
+                  <td class="py-2.5 text-zinc-300 px-2">92.4%</td>
+                  <td class="py-2.5 text-electric-emerald font-bold px-2">98.6% (Near-Lossless)</td>
                 </tr>
                 <tr>
-                  <td class="py-2.5 font-sans font-medium text-white">Mutual Information Leakage \(I(X;Z)\)</td>
-                  <td class="py-2.5 text-rose-400 font-bold">2.41 bits</td>
-                  <td class="py-2.5 text-rose-400">2.41 bits</td>
-                  <td class="py-2.5 text-electric-emerald font-bold">0.038 bits</td>
+                  <td class="py-2.5 font-sans font-medium text-white sticky-col">Mutual Information \(I(X;Z)\)</td>
+                  <td class="py-2.5 text-rose-400 font-bold px-2">2.41 bits</td>
+                  <td class="py-2.5 text-rose-400 px-2">2.41 bits</td>
+                  <td class="py-2.5 text-electric-emerald font-bold px-2">0.038 bits</td>
                 </tr>
                 <tr>
-                  <td class="py-2.5 font-sans font-medium text-white">Mathematical Privacy Guarantee</td>
-                  <td class="py-2.5 text-zinc-500">None</td>
-                  <td class="py-2.5 text-zinc-500">Transport-layer only</td>
-                  <td class="py-2.5 text-electric-emerald font-bold">\((\epsilon=0.5, \delta=10^{-5})\)-DP</td>
+                  <td class="py-2.5 font-sans font-medium text-white sticky-col">Mathematical Privacy Guarantee</td>
+                  <td class="py-2.5 text-zinc-500 px-2">None</td>
+                  <td class="py-2.5 text-zinc-500 px-2">Transport only</td>
+                  <td class="py-2.5 text-electric-emerald font-bold px-2">\((\epsilon=0.5, \delta=10^{-5})\)-DP</td>
                 </tr>
               </tbody>
             </table>
           </div>
         </div>
 
-        <div class="mt-4 pt-3 border-t border-white/5 flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono text-zinc-400">
-          <span>Target Platform: TSMC 28nm Neuromorphic ASIC</span>
-          <button onclick="openModal('mathModal')" class="text-ice-blue hover:underline flex items-center space-x-1">
-            <span>Read Mathematical Proofs & Riemannian Formulations</span>
+        <div class="mt-3 pt-2.5 border-t border-white/5 flex flex-wrap items-center justify-between gap-2 text-[10px] font-mono text-zinc-400">
+          <span>TSMC 28nm Neuromorphic ASIC</span>
+          <button onclick="openModal('mathModal')" class="text-ice-blue hover:underline flex items-center space-x-1 min-h-[30px]">
+            <span>Read Mathematical Proofs</span>
             <span>→</span>
           </button>
         </div>
@@ -915,85 +968,109 @@
   </main>
 
   <!-- ACADEMIC FOOTER & CITATION BAR -->
-  <footer class="glass-panel border-t border-white/10 mt-8 py-6 px-4 lg:px-8 text-xs font-mono text-zinc-400">
-    <div class="max-w-[1720px] mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-      <div class="space-y-1 text-center md:text-left">
-        <div class="text-white font-bold tracking-tight">
+  <footer class="glass-panel border-t border-white/10 mt-6 py-5 px-4 sm:px-6 text-xs font-mono text-zinc-400">
+    <div class="max-w-[1720px] mx-auto flex flex-col md:flex-row items-center justify-between gap-3 text-center md:text-left">
+      <div class="space-y-0.5">
+        <div class="text-white font-bold tracking-tight text-xs sm:text-sm">
           NEURO-SHIELD: Zero-Trust Defense Architecture Against Neural Side-Channel Exploits & Motor Hijacking
         </div>
-        <div class="text-zinc-500 text-[11px]">
+        <div class="text-zinc-500 text-[10px]">
           Presented at IEEE Symposium on Security & Privacy (S&P) / BioCybernetics Poster Session • Paper #S&P-2026-0842
         </div>
       </div>
-      <div class="flex items-center space-x-3">
-        <button onclick="openModal('qrModal')" class="px-3 py-1.5 rounded-lg bg-zinc-900 border border-white/10 text-zinc-300 hover:text-white transition flex items-center space-x-1.5">
+      <div class="flex items-center space-x-2 pt-1 md:pt-0">
+        <button onclick="openModal('qrModal')" class="px-3 py-1.5 rounded-lg bg-zinc-900 border border-white/10 text-zinc-300 hover:text-white transition flex items-center space-x-1.5 text-xs min-h-[36px]">
           <svg class="w-4 h-4 text-ice-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/></svg>
-          <span>Share / Poster QR</span>
+          <span>Poster QR</span>
         </button>
-        <button onclick="openModal('mathModal')" class="px-3 py-1.5 rounded-lg bg-ice-blue/10 border border-ice-blue/30 text-ice-blue hover:bg-ice-blue/20 transition flex items-center space-x-1.5">
-          <span>Theoretical Appendix</span>
+        <button onclick="openModal('mathModal')" class="px-3 py-1.5 rounded-lg bg-ice-blue/10 border border-ice-blue/30 text-ice-blue hover:bg-ice-blue/20 transition flex items-center space-x-1.5 text-xs min-h-[36px]">
+          <span>Appendix</span>
         </button>
       </div>
     </div>
   </footer>
 
+  <!-- MOBILE STICKY FLOATING QUICK-ACTION DOCK (Only visible on small viewports) -->
+  <aside class="md:hidden fixed bottom-3 left-3 right-3 z-40 glass-panel-elevated rounded-2xl p-2 flex items-center justify-between shadow-2xl border border-white/15">
+    <!-- Quick Attack Trigger -->
+    <button onclick="initiateAttackSequence()" class="flex-1 py-2.5 px-2 rounded-xl bg-gradient-to-r from-rose-600 to-rose-700 text-white font-mono text-[11px] font-bold uppercase flex items-center justify-center space-x-1 shadow-lg active:scale-95 transition min-h-[44px]">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+      <span>Run Attack</span>
+    </button>
+
+    <div class="w-px h-6 bg-white/10 mx-2"></div>
+
+    <!-- Quick Shield Toggle -->
+    <button onclick="toggleNeuroShield()" id="mobileShieldDockBtn" class="flex items-center space-x-1.5 py-2.5 px-3 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 font-mono text-[11px] font-bold active:scale-95 transition min-h-[44px]">
+      <span class="w-2 h-2 rounded-full bg-electric-emerald animate-pulse"></span>
+      <span id="mobileShieldDockLabel">Shield ON</span>
+    </button>
+
+    <div class="w-px h-6 bg-white/10 mx-2"></div>
+
+    <!-- Quick Reset / Action -->
+    <button onclick="openModal('qrModal')" class="p-2.5 rounded-xl bg-zinc-900 text-zinc-300 border border-white/10 active:scale-95 transition min-h-[44px] flex items-center justify-center" title="Poster QR">
+      <svg class="w-4 h-4 text-ice-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/></svg>
+    </button>
+  </aside>
+
   <!-- MODAL 1: MATHEMATICAL PROOFS & THEORETICAL FORMULATIONS -->
-  <div id="mathModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xl opacity-0 pointer-events-none transition-opacity duration-200">
-    <div class="glass-panel-elevated max-w-3xl w-full max-h-[85vh] rounded-2xl flex flex-col overflow-hidden border border-white/20 shadow-2xl">
-      <div class="px-6 py-4 border-b border-white/10 flex items-center justify-between">
+  <div id="mathModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-xl opacity-0 pointer-events-none transition-opacity duration-200">
+    <div class="glass-panel-elevated max-w-3xl w-full max-h-[90vh] rounded-2xl flex flex-col overflow-hidden border border-white/20 shadow-2xl">
+      <div class="px-5 py-3.5 border-b border-white/10 flex items-center justify-between">
         <div>
-          <h2 class="text-base font-bold text-white font-mono">Mathematical Proofs & Theoretical Formulations</h2>
-          <p class="text-xs text-zinc-400 font-mono">NEURO-SHIELD Zero-Trust Defense Theorem Suite</p>
+          <h2 class="text-sm sm:text-base font-bold text-white font-mono">Mathematical Proofs & Formulations</h2>
+          <p class="text-[10px] text-zinc-400 font-mono">NEURO-SHIELD Zero-Trust Defense Theorem Suite</p>
         </div>
-        <button onclick="closeModal('mathModal')" class="p-2 rounded-lg bg-zinc-800 text-zinc-400 hover:text-white">✕</button>
+        <button onclick="closeModal('mathModal')" class="p-2 rounded-lg bg-zinc-800 text-zinc-400 hover:text-white min-h-[36px] min-w-[36px] flex items-center justify-center">✕</button>
       </div>
 
-      <div class="p-6 overflow-y-auto space-y-6 text-xs text-zinc-300 font-sans leading-relaxed">
+      <div class="p-4 sm:p-6 overflow-y-auto space-y-4 sm:space-y-6 text-xs text-zinc-300 font-sans leading-relaxed">
         
         <!-- Formulation 1: Affine-Invariant Riemannian Metric -->
-        <div class="p-4 rounded-xl bg-zinc-900/80 border border-white/5 space-y-2">
-          <div class="flex items-center justify-between font-mono text-[11px] text-cyber-amber font-bold">
-            <span>THEOREM 1: AFFINE-INVARIANT RIEMANNIAN METRIC (AIRM) ON COVARIANCE MANIFOLDS</span>
+        <div class="p-3.5 sm:p-4 rounded-xl bg-zinc-900/80 border border-white/5 space-y-2">
+          <div class="flex items-center justify-between font-mono text-[10px] sm:text-[11px] text-cyber-amber font-bold">
+            <span>THEOREM 1: AIRM RIEMANNIAN METRIC</span>
             <span>SPD(N)</span>
           </div>
           <p class="text-zinc-400">
             Cortical covariance matrices \(\mathbf{\Sigma} \in \mathcal{S}_{++}^n\) lie on a Riemannian manifold of symmetric positive definite matrices with non-positive curvature. Spatial adversarial perturbations (e.g. FGSM/PGD) generate unphysical geodesics detected via geodesic distance:
           </p>
-          <div class="p-3 bg-black/60 rounded-lg text-center font-mono text-sm text-white overflow-x-auto">
+          <div class="p-2.5 bg-black/60 rounded-lg text-center font-mono text-xs sm:text-sm text-white overflow-x-auto">
             $$d_{\text{AIRM}}(\mathbf{\Sigma}_1, \mathbf{\Sigma}_2) = \left\| \log(\mathbf{\Sigma}_1^{-1/2} \mathbf{\Sigma}_2 \mathbf{\Sigma}_1^{-1/2}) \right\|_F = \sqrt{\sum_{i=1}^n \ln^2 \lambda_i(\mathbf{\Sigma}_1^{-1}\mathbf{\Sigma}_2)}$$
           </div>
         </div>
 
         <!-- Formulation 2: Local Differential Privacy -->
-        <div class="p-4 rounded-xl bg-zinc-900/80 border border-white/5 space-y-2">
-          <div class="flex items-center justify-between font-mono text-[11px] text-electric-emerald font-bold">
-            <span>THEOREM 2: LOCAL \(\epsilon\)-DIFFERENTIAL PRIVACY & SUBSPACE PROJECTION</span>
+        <div class="p-3.5 sm:p-4 rounded-xl bg-zinc-900/80 border border-white/5 space-y-2">
+          <div class="flex items-center justify-between font-mono text-[10px] sm:text-[11px] text-electric-emerald font-bold">
+            <span>THEOREM 2: LOCAL \(\epsilon\)-DIFFERENTIAL PRIVACY</span>
             <span>STAGE-1</span>
           </div>
           <p class="text-zinc-400">
             Let \(X \in \mathbb{R}^{C \times T}\) denote raw multichannel EEG. The orthogonal projector \(P_\perp = \mathbf{I} - \mathbf{V}_k \mathbf{V}_k^T\) projects telemetry onto the task-subspace, eliminating subliminal P300 oddball vectors. Laplace noise injection guarantees \(\epsilon\)-differential privacy:
           </p>
-          <div class="p-3 bg-black/60 rounded-lg text-center font-mono text-sm text-white overflow-x-auto">
+          <div class="p-2.5 bg-black/60 rounded-lg text-center font-mono text-xs sm:text-sm text-white overflow-x-auto">
             $$Z = P_\perp X + \mathbf{w}, \quad \text{where } \mathbf{w}_{c,t} \sim \text{Lap}\left( \frac{\Delta_1 f}{\epsilon} \right), \quad \sigma = \frac{\Delta_2 f \sqrt{2 \ln(1.25/\delta)}}{\epsilon}$$
           </div>
           <p class="text-zinc-400">
             The mutual information leakage \(I(X; Z)\) between secret credentials and privatized telemetry is rigorously bounded by:
           </p>
-          <div class="p-2 bg-black/60 rounded-lg text-center font-mono text-sm text-electric-emerald">
+          <div class="p-2 bg-black/60 rounded-lg text-center font-mono text-xs sm:text-sm text-electric-emerald">
             $$I(X; Z) \le \frac{\epsilon^2}{2 \ln 2} \quad \left(\text{at } \epsilon=0.5, \quad I(X;Z) \le 0.180 \text{ bits}\right)$$
           </div>
         </div>
 
         <!-- Formulation 3: Biophysical Conduction Dispersion -->
-        <div class="p-4 rounded-xl bg-zinc-900/80 border border-white/5 space-y-2">
-          <div class="flex items-center justify-between font-mono text-[11px] text-ice-blue font-bold">
-            <span>THEOREM 3: BIOPHYSICAL PHASE-LOCKING (PLV) DISPERSION INEQUALITIES</span>
+        <div class="p-3.5 sm:p-4 rounded-xl bg-zinc-900/80 border border-white/5 space-y-2">
+          <div class="flex items-center justify-between font-mono text-[10px] sm:text-[11px] text-ice-blue font-bold">
+            <span>THEOREM 3: BIOPHYSICAL PHASE-LOCKING (PLV) DISPERSION</span>
             <span>STAGE-2</span>
           </div>
           <p class="text-zinc-400">
             Physical skull and CSF volume conduction dictates that genuine biological cross-electrode synchrony decays monotonically with inter-electrode scalp distance \(\|\mathbf{r}_i - \mathbf{r}_j\|\). Synthetic adversarial gradients violate this bound:
           </p>
-          <div class="p-3 bg-black/60 rounded-lg text-center font-mono text-sm text-white overflow-x-auto">
+          <div class="p-2.5 bg-black/60 rounded-lg text-center font-mono text-xs sm:text-sm text-white overflow-x-auto">
             $$PLV_{ij}(t) = \frac{1}{N} \left| \sum_{n=1}^N \exp(i(\phi_i(t, n) - \phi_j(t, n))) \right| \le \kappa \exp\left( -\frac{\|\mathbf{r}_i - \mathbf{r}_j\|^2}{2\lambda^2} \right)$$
           </div>
           <p class="text-zinc-400">
@@ -1003,30 +1080,28 @@
 
       </div>
 
-      <div class="px-6 py-3 border-t border-white/10 flex justify-end">
-        <button onclick="closeModal('mathModal')" class="px-4 py-1.5 rounded-lg bg-zinc-800 text-white font-mono text-xs hover:bg-zinc-700 transition">Close Documentation</button>
+      <div class="px-5 py-3 border-t border-white/10 flex justify-end">
+        <button onclick="closeModal('mathModal')" class="px-4 py-2 rounded-lg bg-zinc-800 text-white font-mono text-xs hover:bg-zinc-700 transition min-h-[38px]">Close Documentation</button>
       </div>
     </div>
   </div>
 
   <!-- MODAL 2: POSTER QR & CITATION MODAL -->
   <div id="qrModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xl opacity-0 pointer-events-none transition-opacity duration-200">
-    <div class="glass-panel-elevated max-w-md w-full rounded-2xl p-6 flex flex-col items-center text-center border border-white/20 shadow-2xl relative">
-      <button onclick="closeModal('qrModal')" class="absolute top-4 right-4 p-1.5 rounded-lg bg-zinc-800 text-zinc-400 hover:text-white">✕</button>
+    <div class="glass-panel-elevated max-w-sm w-full rounded-2xl p-5 sm:p-6 flex flex-col items-center text-center border border-white/20 shadow-2xl relative">
+      <button onclick="closeModal('qrModal')" class="absolute top-3.5 right-3.5 p-1.5 rounded-lg bg-zinc-800 text-zinc-400 hover:text-white min-h-[34px] min-w-[34px] flex items-center justify-center">✕</button>
 
-      <div class="w-12 h-12 rounded-xl bg-ice-blue/10 border border-ice-blue/30 flex items-center justify-center text-ice-blue mb-3">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/></svg>
+      <div class="w-10 h-10 rounded-xl bg-ice-blue/10 border border-ice-blue/30 flex items-center justify-center text-ice-blue mb-2.5">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/></svg>
       </div>
 
-      <h3 class="text-base font-bold text-white font-mono">Scan to Launch Mobile Telemetry</h3>
-      <p class="text-xs text-zinc-400 mt-1">For Conference Judges & Poster Visitors</p>
+      <h3 class="text-sm sm:text-base font-bold text-white font-mono">Scan for Mobile Telemetry</h3>
+      <p class="text-[11px] text-zinc-400 mt-0.5">Physical Poster QR Code</p>
 
-      <!-- SVG QR Code Generation (Functional Vector) -->
-      <div class="p-3 bg-white rounded-xl my-4 shadow-xl">
-        <svg id="qrSvg" class="w-44 h-44" viewBox="0 0 100 100" fill="none">
-          <!-- Stylized High-Tech QR Matrix Pattern -->
+      <!-- SVG QR Code Generation -->
+      <div class="p-3 bg-white rounded-xl my-3 shadow-xl">
+        <svg id="qrSvg" class="w-40 h-40" viewBox="0 0 100 100" fill="none">
           <rect width="100" height="100" fill="white"/>
-          <!-- Position Detection Patterns (Top-Left, Top-Right, Bottom-Left) -->
           <rect x="10" y="10" width="22" height="22" fill="#09090b" rx="2"/>
           <rect x="14" y="14" width="14" height="14" fill="white" rx="1"/>
           <rect x="18" y="18" width="6" height="6" fill="#09090b"/>
@@ -1039,7 +1114,6 @@
           <rect x="14" y="72" width="14" height="14" fill="white" rx="1"/>
           <rect x="18" y="76" width="6" height="6" fill="#09090b"/>
 
-          <!-- Dynamic Data Blocks Simulated Matrix -->
           <g fill="#09090b">
             <rect x="36" y="12" width="4" height="4"/><rect x="44" y="12" width="4" height="4"/><rect x="56" y="12" width="4" height="4"/>
             <rect x="36" y="20" width="8" height="4"/><rect x="52" y="20" width="4" height="4"/><rect x="60" y="20" width="4" height="4"/>
@@ -1054,31 +1128,30 @@
             <rect x="40" y="76" width="8" height="4"/><rect x="56" y="76" width="4" height="4"/><rect x="68" y="76" width="4" height="4"/><rect x="80" y="76" width="4" height="4"/>
             <rect x="36" y="84" width="4" height="4"/><rect x="44" y="84" width="8" height="4"/><rect x="60" y="84" width="8" height="4"/><rect x="76" y="84" width="4" height="4"/><rect x="84" y="84" width="4" height="4"/>
           </g>
-          <!-- Center Neural Shield Logo Badge -->
           <circle cx="50" cy="50" r="10" fill="#09090b"/>
           <circle cx="50" cy="50" r="8" fill="#38bdf8"/>
           <path d="M47 50 L49 52 L53 48" stroke="#09090b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </div>
 
-      <div class="text-[11px] font-mono text-zinc-400 bg-zinc-900/80 p-3 rounded-lg border border-white/5 w-full text-left space-y-1">
-        <div class="text-white font-bold">Citation:</div>
+      <div class="text-[10px] font-mono text-zinc-400 bg-zinc-900/80 p-2.5 rounded-lg border border-white/5 w-full text-left space-y-0.5">
+        <div class="text-white font-bold">Paper Citation:</div>
         <p class="text-zinc-500">
-          "NEURO-SHIELD: Zero-Trust Defense Architecture Against Neural Side-Channel Exploits and Motor Hijacking in Brain-Computer Interfaces." IEEE S&P 2026.
+          "NEURO-SHIELD: Zero-Trust Defense Architecture Against Neural Side-Channel Exploits and Motor Hijacking." IEEE S&P 2026.
         </p>
       </div>
 
-      <button onclick="copyCitation()" id="copyCitationBtn" class="mt-4 w-full py-2 rounded-lg bg-ice-blue/20 text-ice-blue border border-ice-blue/40 font-mono text-xs hover:bg-ice-blue/30 transition">
+      <button onclick="copyCitation()" id="copyCitationBtn" class="mt-3 w-full py-2.5 rounded-lg bg-ice-blue/20 text-ice-blue border border-ice-blue/40 font-mono text-xs hover:bg-ice-blue/30 transition min-h-[40px]">
         Copy BibTeX / Paper DOI
       </button>
     </div>
   </div>
 
-  <!-- JAVASCRIPT ENGINE (VANILLA JS, ZERO LIBRARIES) -->
+  <!-- JAVASCRIPT ENGINE (VANILLA JS, ZERO STREAMLIT, 100% PURE CLIENT-SIDE) -->
   <script>
     /* =========================================================================
        NEURO-SHIELD TELEMETRY & ATTACK-DEFENSE ENGINE
-       Academic Poster Live Research Workbench
+       Academic Poster Live Research Workbench (Pure Vanilla JS, 60 FPS)
        ========================================================================= */
 
     // STATE STORE
@@ -1155,7 +1228,7 @@
     let currentRng = mulberry32(STATE.seed);
 
     /* =========================================================================
-       WEB AUDIO SYNTHESIZER ENGINE (ZERO FILES, PURE WEB AUDIO API)
+       WEB AUDIO SYNTHESIZER ENGINE (ZERO EXTERNAL FILES, PURE WEB AUDIO API)
        ========================================================================= */
     let audioCtx = null;
 
@@ -1259,7 +1332,7 @@
       const icon = document.getElementById('audioIcon');
       if (STATE.audioEnabled) {
         initAudio();
-        text.innerText = 'AUDIO ON';
+        text.innerText = 'AUDIO';
         icon.classList.remove('text-zinc-600');
         icon.classList.add('text-ice-blue');
         playHapticClick(2400);
@@ -1270,8 +1343,8 @@
       }
     }
 
-    // Enable audio context on any user tap/click
-    window.addEventListener('click', () => {
+    // Enable audio context on first screen touch/click
+    window.addEventListener('pointerdown', () => {
       if (STATE.audioEnabled && !audioCtx) {
         initAudio();
       }
@@ -1283,7 +1356,7 @@
     const eegCanvas = document.getElementById('eegCanvas');
     const eegCtx = eegCanvas.getContext('2d', { alpha: false });
 
-    // Handle high-DPI retina display rendering
+    // Handle high-DPI retina display rendering for crystal-sharp lines on mobile
     function resizeCanvas() {
       const rect = eegCanvas.parentElement.getBoundingClientRect();
       const dpr = window.devicePixelRatio || 1;
@@ -1296,7 +1369,7 @@
       resizeMotorCanvas();
     });
 
-    // Pink noise multi-octave filter state
+    // Pink noise filter state
     let pinkB0 = 0, pinkB1 = 0, pinkB2 = 0;
     function nextPinkNoise() {
       const white = (currentRng() * 2 - 1);
@@ -1319,7 +1392,7 @@
       return Math.sqrt(-2.0 * Math.log(u1)) * Math.cos(2.0 * Math.PI * u2) * std;
     }
 
-    // Generate 1 Sample for all 8 channels at t
+    // Generate 1 Sample for all 8 channels at time t
     function generatePhysiologicalSample(t) {
       const samples = new Float32Array(8);
       const pink = nextPinkNoise();
@@ -1356,7 +1429,6 @@
           // Classic N200 - P300 complex
           // P300 peak centered at 0.30s (300 ms post-stimulus) with +15 µV peak amplitude
           const p300 = 15.0 * Math.exp(-Math.pow(timeSinceStim - 0.30, 2) / (2 * Math.pow(0.045, 2)));
-          // N200 negative deflection at 0.18s
           const n200 = -4.5 * Math.exp(-Math.pow(timeSinceStim - 0.18, 2) / (2 * Math.pow(0.025, 2)));
           const erp = p300 + n200;
           STATE.currentErpValue = erp;
@@ -1369,7 +1441,7 @@
 
       // Check for Adversarial PGD perturbation on Central Motor Channels (C3, C4)
       if (STATE.attackType === 'motor' && STATE.isAttackRunning) {
-        const advFreq = 34.5; // High-frequency synthetic perturbation
+        const advFreq = 34.5;
         const advPerturb = 14.0 * Math.sin(2 * Math.PI * advFreq * t);
         samples[2] += advPerturb;
         samples[3] -= advPerturb; // Forces synthetic 180° anti-phase coupling
@@ -1381,7 +1453,6 @@
     // Apply Neuro-Shield Defense Pipeline
     function applyNeuroShield(rawSamples) {
       const shielded = new Float32Array(8);
-      // Sensitivity parameter delta_f = 25 uV
       const deltaF = 25.0;
       const b = deltaF / Math.max(0.1, STATE.epsilon);
       const sigma = (deltaF * Math.sqrt(2 * Math.log(1.25 / 1e-5))) / Math.max(0.1, STATE.epsilon);
@@ -1391,7 +1462,6 @@
 
         // STAGE 1: Subspace Projection (strips P300 ERP component on parietal channels)
         if (ch === 4 || ch === 5 || ch === 6) {
-          // Orthogonal projection removes the task-irrelevant evoked potential
           if (STATE.p300SpikeActive && STATE.currentErpValue !== 0) {
             val -= (ch === 4 ? STATE.currentErpValue : STATE.currentErpValue * 0.65);
           }
@@ -1404,16 +1474,13 @@
         } else if (STATE.noiseType === 'gaussian') {
           noise = sampleGaussian(sigma * 0.15);
         } else {
-          // Adversarial pink noise
           noise = nextPinkNoise() * 1.2;
         }
         val += noise;
 
         // STAGE 2: Biophysical GNN PLV Anomaly Engine
-        // If C3/C4 correlation exceeds biophysical threshold, clamp motor perturbation
         if (ch === 2 || ch === 3) {
           if (STATE.attackType === 'motor' && STATE.isAttackRunning) {
-            // Biophysical anomaly engine clamps synthetic high-frequency perturbation back to clean resting beta
             val = val * 0.35 + 8 * Math.sin(2 * Math.PI * 20 * lastTimeSec);
           }
         }
@@ -1423,7 +1490,7 @@
       return shielded;
     }
 
-    // Update Telemetry Buffers (Called ~60 times per second, pushes samples)
+    // Update Telemetry Buffers (Called 60 times/sec, pushes samples at 250 Hz)
     let lastTimeSec = 0;
     function updateTelemetry(timestamp) {
       if (STATE.isStreamPaused) return;
@@ -1432,7 +1499,6 @@
       const dt = tSec - lastTimeSec;
       lastTimeSec = tSec;
 
-      // Number of discrete samples to add to maintain 250 Hz sample rate
       const samplesToAdd = Math.min(6, Math.max(1, Math.round(dt * STATE.sampleRate)));
 
       for (let s = 0; s < samplesToAdd; s++) {
@@ -1474,9 +1540,9 @@
           const sign = val >= 0 ? '+' : '';
           el.innerText = `${sign}${val.toFixed(1)} µV`;
           if (ch === 4 && STATE.p300SpikeActive && !STATE.neuroShieldActive) {
-            el.className = 'text-[10px] text-rose-400 font-bold animate-pulse';
+            el.className = 'text-[9px] sm:text-[10px] text-rose-400 font-bold animate-pulse';
           } else {
-            el.className = 'text-[10px] text-zinc-300';
+            el.className = 'text-[9px] sm:text-[10px] text-zinc-300';
           }
         }
       }
@@ -1495,13 +1561,12 @@
       eegCtx.fillStyle = '#0c0c10';
       eegCtx.fillRect(0, 0, width, height);
 
-      // Draw Voltage Grid Lines (Horizontal & Vertical)
+      // Draw Voltage Grid Lines
       eegCtx.lineWidth = 1;
       eegCtx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
 
       const channelHeight = height / 8;
       
-      // Horizontal channel base lines & dividers
       for (let i = 0; i <= 8; i++) {
         const y = i * channelHeight;
         eegCtx.beginPath();
@@ -1510,7 +1575,6 @@
         eegCtx.stroke();
       }
 
-      // Vertical timebase divisions (every 100 ms)
       const xDiv = width / 10;
       for (let j = 0; j <= 10; j++) {
         const x = j * xDiv;
@@ -1525,24 +1589,24 @@
 
       // Draw Channels
       const channelColors = [
-        '#38bdf8', // Fp1 (Ice blue)
-        '#38bdf8', // Fp2 (Ice blue)
-        '#f59e0b', // C3 (Amber)
-        '#f59e0b', // C4 (Amber)
-        '#f43f5e', // Pz (Neon Crimson)
-        '#c084fc', // P3 (Purple)
-        '#c084fc', // P4 (Purple)
-        '#34d399'  // O1 (Emerald)
+        '#38bdf8', // Fp1
+        '#38bdf8', // Fp2
+        '#f59e0b', // C3
+        '#f59e0b', // C4
+        '#f43f5e', // Pz
+        '#c084fc', // P3
+        '#c084fc', // P4
+        '#34d399'  // O1
       ];
 
       for (let ch = 0; ch < 8; ch++) {
         const centerY = (ch + 0.5) * channelHeight;
         const color = channelColors[ch];
 
-        // Draw Channel Label on Left
-        eegCtx.font = '10px "SF Mono", JetBrains Mono, monospace';
+        // Channel Label on Left
+        eegCtx.font = '9px "SF Mono", JetBrains Mono, monospace';
         eegCtx.fillStyle = 'rgba(255, 255, 255, 0.35)';
-        eegCtx.fillText(STATE.channelNames[ch], 8, centerY - 6);
+        eegCtx.fillText(STATE.channelNames[ch], 6, centerY - 4);
 
         const rawBuf = STATE.rawBuffers[ch];
         const shBuf = STATE.shieldedBuffers[ch];
@@ -1551,7 +1615,7 @@
         // 1. Draw Raw Telemetry Trace (Left side of split line)
         if (splitX > 0) {
           eegCtx.beginPath();
-          eegCtx.lineWidth = (ch === 4 && STATE.p300SpikeActive) ? 2.4 : 1.4;
+          eegCtx.lineWidth = (ch === 4 && STATE.p300SpikeActive) ? 2.4 : 1.3;
           eegCtx.strokeStyle = (ch === 4 && STATE.p300SpikeActive) ? '#f43f5e' : (STATE.splitMode ? 'rgba(244, 63, 94, 0.85)' : color);
 
           const rawLimitIdx = Math.min(STATE.historyLength - 1, Math.floor(splitX / stepX));
@@ -1568,8 +1632,8 @@
         // 2. Draw Shielded Telemetry Trace (Right side of split line)
         if (splitX < width) {
           eegCtx.beginPath();
-          eegCtx.lineWidth = 1.4;
-          eegCtx.strokeStyle = '#10b981'; // Electric emerald
+          eegCtx.lineWidth = 1.3;
+          eegCtx.strokeStyle = '#10b981';
 
           const startIdx = Math.max(0, Math.floor(splitX / stepX));
 
@@ -1603,7 +1667,7 @@
       }
     }
 
-    // Split Curtain Dragging Interaction
+    // Split Curtain Dragging Interaction (Optimized for Mobile Touch)
     const splitHandle = document.getElementById('splitHandle');
     let isDraggingSplit = false;
 
@@ -1629,15 +1693,17 @@
       isDraggingSplit = false;
     });
 
-    // Touch support for split slider on mobile devices
+    // Touch events for mobile phones (prevent page vertical scroll during dragging)
     splitHandle.addEventListener('touchstart', (e) => {
       isDraggingSplit = true;
-    }, { passive: true });
+      e.preventDefault();
+    }, { passive: false });
     window.addEventListener('touchmove', (e) => {
       if (isDraggingSplit && e.touches[0]) {
+        e.preventDefault();
         handleSplitMove(e.touches[0].clientX);
       }
-    }, { passive: true });
+    }, { passive: false });
     window.addEventListener('touchend', () => {
       isDraggingSplit = false;
     });
@@ -1654,7 +1720,7 @@
       } else {
         splitHandle.style.display = 'none';
         legend.style.display = 'none';
-        btnLabel.innerText = 'OFF (Full)';
+        btnLabel.innerText = 'OFF';
         btnLabel.className = 'text-zinc-500 font-bold';
       }
       playHapticClick(1800);
@@ -1663,7 +1729,7 @@
     function togglePauseStream() {
       STATE.isStreamPaused = !STATE.isStreamPaused;
       const btn = document.getElementById('pauseBtnText');
-      btn.innerText = STATE.isStreamPaused ? '▶ Resume' : '⏸ Freeze';
+      btn.innerText = STATE.isStreamPaused ? '▶ Play' : '⏸ Freeze';
       playHapticClick(1500);
     }
 
@@ -1706,54 +1772,47 @@
     function updateMotorKinematics() {
       const m = STATE.motor;
       
-      // Record trajectory trail
       m.trail.push({ x: m.cursorX, y: m.cursorY });
       if (m.trail.length > 55) m.trail.shift();
 
-      // Desired motor velocity towards Authorized Target (x=0.5, y=0.2)
       let desiredVx = (m.intendedX - m.cursorX) * 0.04;
       let desiredVy = (m.intendedY - m.cursorY) * 0.04;
 
-      // If Adversarial PGD Motor Attack is active
       if (STATE.attackType === 'motor' && STATE.isAttackRunning) {
         if (!STATE.neuroShieldActive) {
-          // Unprotected: Adversary perturbs kinematics towards Malicious Wire Target (x=0.85, y=0.35)
           const hijackVx = (m.hijackX - m.cursorX) * 0.08;
           const hijackVy = (m.hijackY - m.cursorY) * 0.08;
           m.cursorX += hijackVx;
           m.cursorY += hijackVy;
           m.anomalyActive = true;
           document.getElementById('motorDeltaV').innerText = '0.385 m/s (DRIFT)';
-          document.getElementById('motorDeltaV').className = 'text-base font-bold text-rose-500';
+          document.getElementById('motorDeltaV').className = 'text-sm font-bold text-rose-500';
           document.getElementById('motorErrorBar').style.width = '88%';
           document.getElementById('motorErrorBar').className = 'bg-rose-500 h-full transition-all duration-300';
-          document.getElementById('motorHijackStatus').innerText = '100% (COMPROMISED)';
+          document.getElementById('motorHijackStatus').innerText = '100% (HIJACKED)';
           document.getElementById('motorHijackStatus').className = 'font-bold text-rose-500';
           document.getElementById('plvDispersionVal').innerText = '0.988 (VIOLATION)';
-          document.getElementById('plvDispersionVal').className = 'text-base font-bold text-rose-500';
+          document.getElementById('plvDispersionVal').className = 'text-sm font-bold text-rose-500';
         } else {
-          // Protected: Stage-2 GNN intercepts adversarial drift and clamps velocity to intended path
           m.cursorX += desiredVx;
           m.cursorY += desiredVy;
           m.anomalyActive = false;
           document.getElementById('motorAnomalyToast').style.opacity = '1';
           document.getElementById('motorDeltaV').innerText = '0.018 m/s';
-          document.getElementById('motorDeltaV').className = 'text-base font-bold text-white';
+          document.getElementById('motorDeltaV').className = 'text-sm font-bold text-white';
           document.getElementById('motorErrorBar').style.width = '8%';
           document.getElementById('motorErrorBar').className = 'bg-electric-emerald h-full transition-all duration-300';
           document.getElementById('motorHijackStatus').innerText = '0.004% (BLOCKED)';
           document.getElementById('motorHijackStatus').className = 'font-bold text-electric-emerald';
-          document.getElementById('plvDispersionVal').innerText = '0.742 (CONDUCTION NOMINAL)';
-          document.getElementById('plvDispersionVal').className = 'text-base font-bold text-white';
+          document.getElementById('plvDispersionVal').innerText = '0.742 (NOMINAL)';
+          document.getElementById('plvDispersionVal').className = 'text-sm font-bold text-white';
         }
       } else {
-        // Normal baseline movement
         m.cursorX += desiredVx;
         m.cursorY += desiredVy;
         document.getElementById('motorAnomalyToast').style.opacity = '0';
       }
 
-      // Loop cursor once it reaches the target zone
       const distToTarget = Math.hypot(m.cursorX - m.intendedX, m.cursorY - m.intendedY);
       const distToHijack = Math.hypot(m.cursorX - m.hijackX, m.cursorY - m.hijackY);
 
@@ -1770,7 +1829,6 @@
       motorCtx.fillStyle = '#0c0c10';
       motorCtx.fillRect(0, 0, w, h);
 
-      // Arena Grid lines
       motorCtx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
       motorCtx.lineWidth = 1;
       for (let x = 0; x < w; x += 30) {
@@ -1793,7 +1851,7 @@
       const targetPxY = m.intendedY * h;
 
       motorCtx.beginPath();
-      motorCtx.arc(targetPxX, targetPxY, 26, 0, 2 * Math.PI);
+      motorCtx.arc(targetPxX, targetPxY, 24, 0, 2 * Math.PI);
       motorCtx.fillStyle = 'rgba(16, 185, 129, 0.12)';
       motorCtx.fill();
       motorCtx.strokeStyle = '#10b981';
@@ -1801,17 +1859,17 @@
       motorCtx.stroke();
 
       motorCtx.fillStyle = '#10b981';
-      motorCtx.font = '10px "SF Mono", monospace';
+      motorCtx.font = '9px "SF Mono", monospace';
       motorCtx.textAlign = 'center';
-      motorCtx.fillText('TARGET', targetPxX, targetPxY - 32);
-      motorCtx.fillText('Authorize $1.00', targetPxX, targetPxY + 4);
+      motorCtx.fillText('TARGET', targetPxX, targetPxY - 28);
+      motorCtx.fillText('Authorize $1.00', targetPxX, targetPxY + 3);
 
       // 2. Draw Malicious Hijack Zone (Red Circle)
       const hijackPxX = m.hijackX * w;
       const hijackPxY = m.hijackY * h;
 
       motorCtx.beginPath();
-      motorCtx.arc(hijackPxX, hijackPxY, 26, 0, 2 * Math.PI);
+      motorCtx.arc(hijackPxX, hijackPxY, 24, 0, 2 * Math.PI);
       motorCtx.fillStyle = 'rgba(244, 63, 94, 0.12)';
       motorCtx.fill();
       motorCtx.strokeStyle = '#f43f5e';
@@ -1819,8 +1877,8 @@
       motorCtx.stroke();
 
       motorCtx.fillStyle = '#f43f5e';
-      motorCtx.fillText('HIJACK ZONE', hijackPxX, hijackPxY - 32);
-      motorCtx.fillText('Exfiltrate $50k', hijackPxX, hijackPxY + 4);
+      motorCtx.fillText('HIJACK ZONE', hijackPxX, hijackPxY - 28);
+      motorCtx.fillText('Wire $50k', hijackPxX, hijackPxY + 3);
 
       // 3. Draw Trajectory Trail
       if (m.trail.length > 1) {
@@ -1843,17 +1901,15 @@
       const curPxX = m.cursorX * w;
       const curPxY = m.cursorY * h;
 
-      // Glow halo
       motorCtx.beginPath();
-      motorCtx.arc(curPxX, curPxY, 12, 0, 2 * Math.PI);
+      motorCtx.arc(curPxX, curPxY, 11, 0, 2 * Math.PI);
       motorCtx.fillStyle = (!STATE.neuroShieldActive && STATE.attackType === 'motor' && STATE.isAttackRunning)
         ? 'rgba(244, 63, 94, 0.4)'
         : 'rgba(56, 189, 248, 0.4)';
       motorCtx.fill();
 
-      // Center cursor point
       motorCtx.beginPath();
-      motorCtx.arc(curPxX, curPxY, 5, 0, 2 * Math.PI);
+      motorCtx.arc(curPxX, curPxY, 4.5, 0, 2 * Math.PI);
       motorCtx.fillStyle = '#ffffff';
       motorCtx.fill();
     }
@@ -1879,24 +1935,22 @@
       STATE.decodedConfidences = [0, 0, 0, 0];
       updateDecoderUI();
 
-      // Cinematic ambient perimeter glow
       document.body.classList.add('breach-alert-active');
       launchAttackBtn.classList.add('opacity-50', 'pointer-events-none');
-      launchAttackBtn.innerText = '⚡ INTERROGATION SEQUENCE IN PROGRESS...';
+      launchAttackBtn.innerText = '⚡ INTERROGATING BRAIN RHYTHMS...';
 
       document.getElementById('decoderStatusBadge').innerText = 'PROBING COGNITIVE RESPONSE...';
       document.getElementById('decoderStatusBadge').className = 'text-rose-400 font-semibold animate-pulse';
 
       playHapticClick(2800);
 
-      // Subliminal RSVP Engine running at 28.5 ms (<33 ms simulated visual flicker)
       let flashCount = 0;
       let maskActive = false;
 
+      // Sub-33ms flicker engine (28 ms cycling)
       rsvpInterval = setInterval(() => {
         flashCount++;
 
-        // Visual masking alternation
         if (maskActive) {
           stimulusNumber.innerText = '#';
           stimulusSubtext.innerText = 'MASK_PRIME';
@@ -1912,16 +1966,13 @@
           currentProbeNum = STATE.targetPin[STATE.activeDigitIndex];
           stimulusTargetFlag.classList.remove('hidden');
           stimulusCard.classList.add('border-rose-500', 'shadow-rose-500/50');
-          maskActive = true; // Mask next frame
+          maskActive = true;
 
-          // Trigger P300 spike in EEG engine at t = 300 ms post-stimulus
           STATE.p300SpikeActive = true;
           STATE.p300SpikeTime = lastTimeSec;
 
-          // Sound effect
           playHapticClick(3200, 0.015);
 
-          // Reveal P300 toast if unprotected
           if (!STATE.neuroShieldActive) {
             document.getElementById('p300AlertToast').style.opacity = '1';
             setTimeout(() => {
@@ -1932,12 +1983,10 @@
           // Advance AI decoder PIN reconstruction at t = 300 ms
           setTimeout(() => {
             if (!STATE.neuroShieldActive) {
-              // Unprotected: AI decoder successfully reconstructs secret PIN
               STATE.decodedDigits[STATE.activeDigitIndex] = currentProbeNum;
               STATE.decodedConfidences[STATE.activeDigitIndex] = (97.5 + currentRng() * 2.2).toFixed(1);
               playBreachAlarm();
             } else {
-              // Protected: ε-LDP noise flattens peak, decoder guesses random digit with chance floor confidence
               STATE.decodedDigits[STATE.activeDigitIndex] = Math.floor(currentRng() * 10);
               STATE.decodedConfidences[STATE.activeDigitIndex] = (9.2 + currentRng() * 1.5).toFixed(1);
               playShieldChime();
@@ -1947,7 +1996,6 @@
             STATE.activeDigitIndex++;
 
             if (STATE.activeDigitIndex >= 4) {
-              // Finish interrogation
               endAttackSequence();
             }
           }, 300);
@@ -1961,7 +2009,7 @@
         stimulusNumber.innerText = currentProbeNum;
         stimulusSubtext.innerText = `PROBE_0${currentProbeNum}`;
 
-      }, 28); // 28 ms cycling (< 33 ms visual flicker)
+      }, 28);
     }
 
     function endAttackSequence() {
@@ -1976,9 +2024,9 @@
       const banner = document.getElementById('attackResultBanner');
 
       if (!STATE.neuroShieldActive) {
-        statusBadge.innerText = 'BREACH CONFIRMED: PIN 7-4-9-2 EXTRACTED';
+        statusBadge.innerText = 'BREACH: PIN 7-4-9-2 LEAKED';
         statusBadge.className = 'text-rose-500 font-bold';
-        banner.className = 'p-2 rounded bg-rose-950/40 border border-rose-500/30 text-[11px] font-mono text-rose-300 leading-snug';
+        banner.className = 'p-2 rounded bg-rose-950/40 border border-rose-500/30 text-[10px] font-mono text-rose-300 leading-snug';
         banner.innerHTML = '🚨 <strong>Side-Channel Breach Successful:</strong> Parietal +15 µV P300 evoked peak leaked user PIN with 98.7% AI classification confidence.';
         document.getElementById('miLeakageVal').innerText = '2.41 bits';
         document.getElementById('miProgressBar').style.width = '96%';
@@ -1986,7 +2034,7 @@
       } else {
         statusBadge.innerText = 'ATTACK NEUTRALIZED: ZERO-TRUST SHIELD';
         statusBadge.className = 'text-electric-emerald font-bold';
-        banner.className = 'p-2 rounded bg-emerald-950/40 border border-emerald-500/20 text-[11px] font-mono text-emerald-300 leading-snug';
+        banner.className = 'p-2 rounded bg-emerald-950/40 border border-emerald-500/20 text-[10px] font-mono text-emerald-300 leading-snug';
         banner.innerHTML = '✓ <strong>Neuro-Shield Active:</strong> P300 peak flattened via ε-LDP subspace projection. Decoder guessing at chance floor (<10.2%).';
         document.getElementById('miLeakageVal').innerText = '0.038 bits';
         document.getElementById('miProgressBar').style.width = '4%';
@@ -2003,15 +2051,15 @@
 
         if (STATE.decodedDigits[i] !== '?') {
           if (!STATE.neuroShieldActive) {
-            slot.className = 'text-lg font-bold text-rose-500 mt-0.5';
-            conf.className = 'text-[9px] text-rose-400 font-semibold';
+            slot.className = 'text-base sm:text-lg font-bold text-rose-500 mt-0.5';
+            conf.className = 'text-[8px] text-rose-400 font-semibold';
           } else {
-            slot.className = 'text-lg font-bold text-electric-emerald mt-0.5';
-            conf.className = 'text-[9px] text-electric-emerald font-semibold';
+            slot.className = 'text-base sm:text-lg font-bold text-electric-emerald mt-0.5';
+            conf.className = 'text-[8px] text-electric-emerald font-semibold';
           }
         } else {
-          slot.className = 'text-lg font-bold text-zinc-600 mt-0.5';
-          conf.className = 'text-[9px] text-zinc-500';
+          slot.className = 'text-base sm:text-lg font-bold text-zinc-600 mt-0.5';
+          conf.className = 'text-[8px] text-zinc-500';
         }
       }
     }
@@ -2030,8 +2078,8 @@
       btn.classList.add('border-rose-500', 'bg-rose-950/30');
       dot.classList.add('animate-ping');
       label.innerText = 'Capturing 500 Neural Packets...';
-      badge.innerText = 'RECORDING BUFFER [0/500]';
-      badge.className = 'text-[10px] font-mono text-rose-400 font-bold';
+      badge.innerText = 'RECORDING [0/500]';
+      badge.className = 'text-[9px] font-mono text-rose-400 font-bold';
 
       playHapticClick(2600);
     }
@@ -2046,8 +2094,8 @@
       btn.classList.remove('border-rose-500', 'bg-rose-950/30');
       dot.classList.remove('animate-ping');
       label.innerText = '✓ Captured 500 Packets (2.00s Ready)';
-      badge.innerText = 'RUN BUFFER CACHED (500 PKTS)';
-      badge.className = 'text-[10px] font-mono text-electric-emerald font-bold';
+      badge.innerText = 'BUFFER READY (500 PKTS)';
+      badge.className = 'text-[9px] font-mono text-electric-emerald font-bold';
 
       playShieldChime();
     }
@@ -2071,10 +2119,8 @@
       STATE.neuroShieldActive = enableDefense;
       updateDefenseUI();
 
-      // Reset Seed to exact same PRNG sequence
       currentRng = mulberry32(STATE.seed);
 
-      // Reset replay scrubber
       const scrub = document.getElementById('replayScrubSlider');
       scrub.value = 0;
       
@@ -2084,7 +2130,6 @@
         scrub.value = scrubVal;
         document.getElementById('replayTimecode').innerText = `${(scrubVal / 250).toFixed(2)}s / 2.00s`;
 
-        // P300 peak at t = 300 ms (index 75)
         if (scrubVal >= 70 && scrubVal <= 85) {
           STATE.p300SpikeActive = true;
           STATE.p300SpikeTime = lastTimeSec;
@@ -2115,43 +2160,43 @@
     const pipelineData = {
       1: {
         title: 'NODE 01: CORTICAL INTERFACE (10-20 ELECTRODE MONTAGE)',
-        subtitle: 'Scalp surface electrophysiology acquisition',
+        subtitle: 'Scalp electrophysiology acquisition',
         formula: '$$V_i(t) = \\sum_{k} G_{ik} S_k(t) + \\eta_i(t), \\quad i \\in \\{F_{p1}, F_{p2}, C_3, C_4, P_z, P_3, P_4, O_1\\}$$',
         desc: '8 silver/silver-chloride sintered electrodes capture microvolt potentials across frontal, sensorimotor, parietal, and visual cortices. Subject to skull volume conduction dispersion and environmental 60 Hz hum.',
-        stat1: 'Impedance: < 3.2 kΩ Nominal',
-        stat2: 'Signal Range: ±100 µV'
+        stat1: 'Impedance: < 3.2 kΩ',
+        stat2: 'Signal: ±100 µV'
       },
       2: {
         title: 'NODE 02: ANALOG FRONT-END (AFE) DIGITIZER & FILTER',
-        subtitle: 'Sub-millivolt amplification and Nyquist-rate digitizer',
+        subtitle: 'Sub-millivolt amplification & digitizer',
         formula: '$$H(s) = \\frac{s \\omega_H}{(s + \\omega_L)(s + \\omega_H)} \\cdot \\frac{s^2 + \\omega_0^2}{s^2 + \\frac{\\omega_0}{Q}s + \\omega_0^2}, \\quad f_s = 250\\text{ Hz}$$',
         desc: 'Custom biopotential low-noise instrumentation amplifiers perform analog bandpass filtering (0.5 – 50 Hz) and 60 Hz notch suppression before 24-bit delta-sigma analog-to-digital conversion.',
-        stat1: 'Sampling Frequency: 250 Hz',
+        stat1: 'Sampling: 250 Hz',
         stat2: 'CMRR: 118 dB'
       },
       3: {
         title: 'NODE 03: STAGE-1 ON-CHIP ε-LDP DIFFERENTIAL PRIVACY SCRAMBLER',
-        subtitle: 'Subspace orthogonal projection & calibrated Laplace noise injection',
+        subtitle: 'Subspace projection & Laplace noise',
         formula: '$$Z = (\\mathbf{I} - \\mathbf{V}_{\\text{task}} \\mathbf{V}_{\\text{task}}^T) X + \\mathbf{w}, \\quad \\mathbf{w} \\sim \\text{Lap}\\left(\\frac{\\Delta_1 f}{\\epsilon}\\right)$$',
         desc: 'Strips task-irrelevant evoked potentials (P300 oddball side-channel) using an orthogonal projector while injecting calibrated Laplace noise. Guarantees mathematical ε-differential privacy, bounding mutual information leakage to <0.04 bits.',
-        stat1: 'Privacy Budget ε: 0.50',
-        stat2: 'MI Leakage: 0.038 bits'
+        stat1: 'Budget ε: 0.50',
+        stat2: 'MI: 0.038 bits'
       },
       4: {
         title: 'NODE 04: STAGE-2 BIOPHYSICAL GNN & PLV ANOMALY ENGINE',
-        subtitle: 'Cortical dispersion verification and AIRM covariance distance',
+        subtitle: 'Cortical dispersion & AIRM metric',
         formula: '$$d_{\\text{AIRM}}(\\mathbf{\\Sigma}, \\mathbf{\\Sigma}_{\\text{ref}}) \\le \\tau_d, \\quad PLV_{ij} \\le \\kappa \\exp\\left(-\\frac{\\|\\mathbf{r}_i - \\mathbf{r}_j\\|^2}{2\\lambda^2}\\right)$$',
         desc: 'Graph Neural Network verifies physical volume conduction constraints across electrodes. Adversarial perturbations (PGD/FGSM) create synthetic phase synchrony that violates human biophysical tissue dispersion, triggering instant suppression.',
-        stat1: 'AIRM Geodesic: 0.084',
-        stat2: 'Suppression Rate: 99.996%'
+        stat1: 'AIRM: 0.084',
+        stat2: 'Suppression: 99.996%'
       },
       5: {
         title: 'NODE 05: ZERO-TRUST ACTUATOR / HOST OS GATEWAY',
         subtitle: 'Cryptographically validated kinematic intent delivery',
         formula: '$$\\hat{\\mathbf{v}}(t) = \\arg\\min_{\\mathbf{v}} \\| \\mathbf{v} - \\mathcal{D}(Z) \\|^2 \\quad \\text{s.t.} \\quad \\|\\nabla \\mathbf{v}\\| \\le a_{\\max}$$',
         desc: 'The host operating system receives sanitized neural intents verified against the zero-trust biophysical certificate. Kinematic commands are cryptographically signed before driving prosthetic actuators or desktop cursor events.',
-        stat1: 'Kinematic Fidelity: 98.6%',
-        stat2: 'Overhead: 1.8 ms ASIC'
+        stat1: 'Fidelity: 98.6%',
+        stat2: 'ASIC: 1.8 ms'
       }
     };
 
@@ -2169,23 +2214,22 @@
       const data = pipelineData[nodeNum];
       const box = document.getElementById('pipelineDetailBox');
       box.innerHTML = `
-        <div class="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-white/10">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 pb-2 border-b border-white/10">
           <div>
             <span class="text-ice-blue font-bold text-xs">${data.title}</span>
-            <span class="text-zinc-500 ml-2 text-[10px]">• ${data.subtitle}</span>
+            <span class="text-zinc-500 ml-1 text-[10px] hidden sm:inline">• ${data.subtitle}</span>
           </div>
-          <div class="flex items-center space-x-3 text-[10px] text-zinc-400">
-            <span class="px-2 py-0.5 rounded bg-black/40 border border-white/5 text-electric-emerald">${data.stat1}</span>
-            <span class="px-2 py-0.5 rounded bg-black/40 border border-white/5 text-cyber-amber">${data.stat2}</span>
+          <div class="flex items-center space-x-2 text-[9px] text-zinc-400 pt-0.5 sm:pt-0">
+            <span class="px-1.5 py-0.5 rounded bg-black/40 border border-white/5 text-electric-emerald">${data.stat1}</span>
+            <span class="px-1.5 py-0.5 rounded bg-black/40 border border-white/5 text-cyber-amber">${data.stat2}</span>
           </div>
         </div>
-        <div class="my-3 p-3 rounded-lg bg-black/60 text-center text-sm text-white overflow-x-auto formula-box">
+        <div class="my-2.5 p-2.5 rounded-lg bg-black/60 text-center text-xs sm:text-sm text-white overflow-x-auto formula-box">
           ${data.formula}
         </div>
-        <p class="text-zinc-400 text-xs leading-relaxed font-sans">${data.desc}</p>
+        <p class="text-zinc-400 text-[11px] leading-relaxed font-sans">${data.desc}</p>
       `;
 
-      // Render KaTeX for equation
       if (window.renderMathInElement) {
         renderMathInElement(box, {
           delimiters: [
@@ -2210,12 +2254,10 @@
       document.getElementById('plvValDisplay').innerText = STATE.tau_plv.toFixed(2);
       document.getElementById('hudEpsilon').innerText = STATE.epsilon.toFixed(2);
 
-      // Recalculate injected Laplace scale
       const deltaF = 25.0;
       const sigma = (deltaF * Math.sqrt(2 * Math.log(1.25 / 1e-5))) / STATE.epsilon;
       document.getElementById('laplaceScaleDisplay').innerText = `σ = ${(sigma * 0.18).toFixed(2)} µV`;
 
-      // Live Mutual Information bound: I(X;Z) <= eps^2 / (2 * ln 2)
       const mi = Math.min(2.41, (Math.pow(STATE.epsilon, 2) / (2 * Math.log(2))) * 0.12).toFixed(3);
       document.getElementById('paramMiDisplay').innerText = `${mi} bits`;
       document.getElementById('miLeakageVal').innerText = `${mi} bits`;
@@ -2229,9 +2271,9 @@
       ['laplace', 'gaussian', 'pink'].forEach(t => {
         const btn = document.getElementById(`noiseBtn${t.charAt(0).toUpperCase() + t.slice(1)}`);
         if (t === type) {
-          btn.className = 'py-1.5 px-2 rounded bg-ice-blue/20 text-ice-blue border border-ice-blue/40 text-center font-bold text-[11px]';
+          btn.className = 'py-2 px-1.5 rounded bg-ice-blue/20 text-ice-blue border border-ice-blue/40 text-center font-bold text-[10px] min-h-[38px] flex items-center justify-center';
         } else {
-          btn.className = 'py-1.5 px-2 rounded bg-zinc-900 text-zinc-400 border border-white/5 hover:border-white/20 text-center text-[11px]';
+          btn.className = 'py-2 px-1.5 rounded bg-zinc-900 text-zinc-400 border border-white/5 hover:border-white/20 text-center text-[10px] min-h-[38px] flex items-center justify-center';
         }
       });
       playHapticClick(1600);
@@ -2243,11 +2285,11 @@
       const motorBtn = document.getElementById('attackTypeMotor');
 
       if (type === 'p300') {
-        p300Btn.className = 'py-2 px-2.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/40 text-left font-medium text-[11px] flex items-center justify-between';
-        motorBtn.className = 'py-2 px-2.5 rounded bg-zinc-900 text-zinc-400 border border-white/5 hover:border-white/20 text-left font-medium text-[11px] flex items-center justify-between';
+        p300Btn.className = 'py-2.5 px-2.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/40 text-left font-medium text-[11px] flex items-center justify-between min-h-[42px]';
+        motorBtn.className = 'py-2.5 px-2.5 rounded bg-zinc-900 text-zinc-400 border border-white/5 hover:border-white/20 text-left font-medium text-[11px] flex items-center justify-between min-h-[42px]';
       } else {
-        motorBtn.className = 'py-2 px-2.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/40 text-left font-medium text-[11px] flex items-center justify-between';
-        p300Btn.className = 'py-2 px-2.5 rounded bg-zinc-900 text-zinc-400 border border-white/5 hover:border-white/20 text-left font-medium text-[11px] flex items-center justify-between';
+        motorBtn.className = 'py-2.5 px-2.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/40 text-left font-medium text-[11px] flex items-center justify-between min-h-[42px]';
+        p300Btn.className = 'py-2.5 px-2.5 rounded bg-zinc-900 text-zinc-400 border border-white/5 hover:border-white/20 text-left font-medium text-[11px] flex items-center justify-between min-h-[42px]';
       }
       playHapticClick(1700);
     }
@@ -2271,29 +2313,41 @@
       const statusText = document.getElementById('defenseStatusText');
       const pulseBadge = document.getElementById('defensePulseBadge');
       const motorBadge = document.getElementById('motorShieldBadge');
+      const mobileDockBtn = document.getElementById('mobileShieldDockBtn');
+      const mobileDockLabel = document.getElementById('mobileShieldDockLabel');
 
       if (STATE.neuroShieldActive) {
-        btn.className = 'group relative px-3.5 py-1.5 rounded-lg text-xs font-semibold font-mono tracking-tight transition-all duration-200 flex items-center space-x-2 bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 hover:bg-emerald-500/20 glow-emerald';
-        label.innerText = 'SHIELD: ENGAGED';
+        btn.className = 'group relative px-3 py-1.5 rounded-lg text-xs font-semibold font-mono tracking-tight transition-all duration-200 flex items-center space-x-1.5 bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 hover:bg-emerald-500/20 glow-emerald min-h-[36px]';
+        label.innerText = 'SHIELD: ON';
         statusText.innerText = 'ZERO-TRUST ACTIVE';
         statusText.className = 'text-electric-emerald font-semibold';
         pulseBadge.innerHTML = `
           <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-electric-emerald opacity-75"></span>
           <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-electric-emerald"></span>
         `;
-        motorBadge.innerText = 'Motor Guard Active';
-        motorBadge.className = 'text-[10px] font-normal px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/30';
+        motorBadge.innerText = 'Active';
+        motorBadge.className = 'text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/30';
+        
+        if (mobileDockBtn) {
+          mobileDockBtn.className = 'flex items-center space-x-1.5 py-2.5 px-3 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 font-mono text-[11px] font-bold active:scale-95 transition min-h-[44px]';
+          mobileDockLabel.innerText = 'Shield ON';
+        }
       } else {
-        btn.className = 'group relative px-3.5 py-1.5 rounded-lg text-xs font-semibold font-mono tracking-tight transition-all duration-200 flex items-center space-x-2 bg-rose-500/10 border border-rose-500/30 text-rose-300 hover:bg-rose-500/20 glow-crimson';
-        label.innerText = 'SHIELD: DISABLED';
-        statusText.innerText = 'VULNERABLE (UNPROTECTED)';
+        btn.className = 'group relative px-3 py-1.5 rounded-lg text-xs font-semibold font-mono tracking-tight transition-all duration-200 flex items-center space-x-1.5 bg-rose-500/10 border border-rose-500/30 text-rose-300 hover:bg-rose-500/20 glow-crimson min-h-[36px]';
+        label.innerText = 'SHIELD: OFF';
+        statusText.innerText = 'UNPROTECTED';
         statusText.className = 'text-neon-crimson font-semibold';
         pulseBadge.innerHTML = `
           <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-neon-crimson opacity-75"></span>
           <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-neon-crimson"></span>
         `;
-        motorBadge.innerText = 'Motor Guard Disabled';
-        motorBadge.className = 'text-[10px] font-normal px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-300 border border-rose-500/30';
+        motorBadge.innerText = 'Disabled';
+        motorBadge.className = 'text-[9px] px-1.5 py-0.5 rounded-full bg-rose-500/10 text-rose-300 border border-rose-500/30';
+
+        if (mobileDockBtn) {
+          mobileDockBtn.className = 'flex items-center space-x-1.5 py-2.5 px-3 rounded-xl bg-rose-500/20 border border-rose-500/40 text-rose-300 font-mono text-[11px] font-bold active:scale-95 transition min-h-[44px]';
+          mobileDockLabel.innerText = 'Shield OFF';
+        }
       }
     }
 
@@ -2304,7 +2358,7 @@
       1: {
         title: 'Observing Resting Baseline Brain Rhythms',
         desc: 'The 8-channel EEG telemetry below displays normal physiological oscillations across frontal, central motor, parietal, and occipital lobes. Observe the resting 10 Hz alpha wave on O1 and 20 Hz beta on C3/C4. No adversarial or evoked anomalies are present.',
-        action: '<button onclick="nextStep()" class="px-3.5 py-1.5 rounded-lg bg-ice-blue/20 text-ice-blue border border-ice-blue/40 text-xs font-semibold hover:bg-ice-blue/30 transition">Next: Trigger The Breach →</button>',
+        action: '<button onclick="nextStep()" class="px-3 py-1.5 rounded-lg bg-ice-blue/20 text-ice-blue border border-ice-blue/40 text-xs font-semibold hover:bg-ice-blue/30 transition min-h-[36px]">Next: Trigger The Breach →</button>',
         setup: () => {
           STATE.neuroShieldActive = true;
           STATE.attackType = 'p300';
@@ -2315,13 +2369,13 @@
         title: 'The Breach: Subliminal P300 Oddball & Motor Hijack',
         desc: 'Observe how a malicious BCI application flashes numeric credentials at rapid visual presentation rates (<33 ms). When the secret PIN appears, the user’s brain involuntarily generates a +15 µV positive deflection (P300) on parietal electrode Pz at t = 300 ms, leaking their secret credential to the AI decoder.',
         action: `
-          <div class="flex items-center space-x-2">
-            <button onclick="initiateAttackSequence()" class="px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white text-xs font-mono font-bold uppercase transition glow-crimson">⚡ Run P300 Breach</button>
-            <button onclick="triggerMotorHijack()" class="px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-rose-300 border border-rose-500/40 text-xs font-mono font-bold uppercase transition">🎯 Run Motor Hijack</button>
+          <div class="flex items-center space-x-1.5">
+            <button onclick="initiateAttackSequence()" class="px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white text-xs font-mono font-bold uppercase transition glow-crimson min-h-[36px]">⚡ P300 Breach</button>
+            <button onclick="triggerMotorHijack()" class="px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-rose-300 border border-rose-500/40 text-xs font-mono font-bold uppercase transition min-h-[36px]">🎯 Motor Hijack</button>
           </div>
         `,
         setup: () => {
-          STATE.neuroShieldActive = false; // Disable defense to demonstrate vulnerability
+          STATE.neuroShieldActive = false;
           STATE.attackType = 'p300';
           updateDefenseUI();
         }
@@ -2330,8 +2384,8 @@
         title: 'The Defense: Dual-Stage Neuro-Firewall Activated',
         desc: 'Engaging the Neuro-Shield on-chip ASIC: Stage-1 projects telemetry onto a task-orthogonal subspace and injects calibrated Laplace noise, flattening the P300 spike into ambient variance. Stage-2 GNN verifies cortical dispersion inequalities, blocking adversarial motor hijacking.',
         action: `
-          <div class="flex items-center space-x-2">
-            <button onclick="initiateAttackSequence()" class="px-3.5 py-1.5 rounded-lg bg-electric-emerald/20 text-electric-emerald border border-electric-emerald/40 text-xs font-mono font-bold uppercase hover:bg-electric-emerald/30 transition glow-emerald">🛡️ Test Shield vs Attack</button>
+          <div class="flex items-center space-x-1.5">
+            <button onclick="initiateAttackSequence()" class="px-3 py-1.5 rounded-lg bg-electric-emerald/20 text-electric-emerald border border-electric-emerald/40 text-xs font-mono font-bold uppercase hover:bg-electric-emerald/30 transition glow-emerald min-h-[36px]">🛡️ Test Shield Defense</button>
           </div>
         `,
         setup: () => {
@@ -2342,7 +2396,7 @@
       4: {
         title: 'The Scientific Audit: Head-to-Head Benchmark & Replay',
         desc: 'Review the empirical benchmark matrix (N=1,200 trials) and deterministic experiment replay buffer below. Neuro-Shield bounds mutual information leakage to <0.038 bits while preserving 98.6% motor kinematic intent at only 1.8 ms hardware ASIC latency.',
-        action: '<button onclick="openModal(\'mathModal\')" class="px-3.5 py-1.5 rounded-lg bg-cyber-amber/20 text-cyber-amber border border-cyber-amber/40 text-xs font-mono font-bold hover:bg-cyber-amber/30 transition">View Mathematical Proofs</button>',
+        action: '<button onclick="openModal(\'mathModal\')" class="px-3 py-1.5 rounded-lg bg-cyber-amber/20 text-cyber-amber border border-cyber-amber/40 text-xs font-mono font-bold hover:bg-cyber-amber/30 transition min-h-[36px]">View Math Proofs</button>',
         setup: () => {
           STATE.neuroShieldActive = true;
           updateDefenseUI();
@@ -2353,15 +2407,14 @@
     function goToStep(stepNum) {
       STATE.currentStep = stepNum;
       
-      // Update UI Stepper Tabs
       for (let i = 1; i <= 4; i++) {
         const tab = document.getElementById(`stepTab${i}`);
         if (i === stepNum) {
-          tab.className = 'cursor-pointer p-2 rounded-lg border border-ice-blue/50 bg-ice-blue/10 transition-all';
+          tab.className = 'cursor-pointer p-2.5 rounded-lg border border-ice-blue/50 bg-ice-blue/10 transition-all min-w-[130px] sm:min-w-0 flex-shrink-0 snap-start';
           tab.querySelector('div').className = 'flex items-center space-x-1.5 text-xs font-semibold text-ice-blue';
           tab.querySelector('span').className = 'w-4 h-4 rounded-full bg-ice-blue/20 text-[10px] flex items-center justify-center font-mono';
         } else {
-          tab.className = 'cursor-pointer p-2 rounded-lg border border-white/5 bg-zinc-900/50 hover:bg-zinc-800/50 transition-all';
+          tab.className = 'cursor-pointer p-2.5 rounded-lg border border-white/5 bg-zinc-900/60 hover:bg-zinc-800/60 transition-all min-w-[130px] sm:min-w-0 flex-shrink-0 snap-start';
           tab.querySelector('div').className = 'flex items-center space-x-1.5 text-xs font-semibold text-zinc-400';
           tab.querySelector('span').className = 'w-4 h-4 rounded-full bg-zinc-800 text-[10px] flex items-center justify-center font-mono';
         }
@@ -2399,13 +2452,13 @@
       const tourSection = document.getElementById('guidedTourSection');
 
       if (m === 'guided') {
-        guidedBtn.className = 'px-3 py-1.5 rounded-md text-xs font-medium transition-all duration-200 bg-white/10 text-white shadow-sm flex items-center space-x-1.5';
-        proBtn.className = 'px-3 py-1.5 rounded-md text-xs font-medium transition-all duration-200 text-zinc-400 hover:text-white flex items-center space-x-1.5';
+        guidedBtn.className = 'px-2.5 py-1.5 rounded-md text-xs font-medium transition-all duration-200 bg-white/10 text-white shadow-sm flex items-center space-x-1 min-h-[32px]';
+        proBtn.className = 'px-2.5 py-1.5 rounded-md text-xs font-medium transition-all duration-200 text-zinc-400 hover:text-white flex items-center space-x-1 min-h-[32px]';
         tourSection.style.display = 'block';
         goToStep(1);
       } else {
-        proBtn.className = 'px-3 py-1.5 rounded-md text-xs font-medium transition-all duration-200 bg-white/10 text-white shadow-sm flex items-center space-x-1.5';
-        guidedBtn.className = 'px-3 py-1.5 rounded-md text-xs font-medium transition-all duration-200 text-zinc-400 hover:text-white flex items-center space-x-1.5';
+        proBtn.className = 'px-2.5 py-1.5 rounded-md text-xs font-medium transition-all duration-200 bg-white/10 text-white shadow-sm flex items-center space-x-1 min-h-[32px]';
+        guidedBtn.className = 'px-2.5 py-1.5 rounded-md text-xs font-medium transition-all duration-200 text-zinc-400 hover:text-white flex items-center space-x-1 min-h-[32px]';
         tourSection.style.display = 'none';
       }
       playHapticClick(1500);
@@ -2419,7 +2472,6 @@
       modal.classList.remove('opacity-0', 'pointer-events-none');
       modal.classList.add('opacity-100', 'pointer-events-auto');
       
-      // Render any equations inside modal
       if (window.renderMathInElement) {
         renderMathInElement(modal, {
           delimiters: [
@@ -2466,17 +2518,11 @@
     let lastFpsTime = performance.now();
 
     function mainAnimationLoop(timestamp) {
-      // 1. Update Telemetry
       updateTelemetry(timestamp);
-
-      // 2. Render Oscilloscope
       renderOscilloscope();
-
-      // 3. Update & Render Motor Kinematics
       updateMotorKinematics();
       renderMotorCanvas();
 
-      // 4. Update FPS Meter
       frameCount++;
       if (timestamp - lastFpsTime >= 1000) {
         document.getElementById('fpsCounter').innerText = frameCount;
@@ -2491,11 +2537,10 @@
     window.addEventListener('DOMContentLoaded', () => {
       resizeCanvas();
       resizeMotorCanvas();
-      selectPipelineNode(3); // Default highlight Stage-1 defense
+      selectPipelineNode(3);
       updateParameters();
-      goToStep(1); // Start on Step 1 of story mode
+      goToStep(1);
 
-      // Initial Math Rendering Across Page
       if (window.renderMathInElement) {
         renderMathInElement(document.body, {
           delimiters: [
